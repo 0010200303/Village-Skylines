@@ -18,14 +18,14 @@ class UIManager(tk.Tk):
     def __init__(self,
                  *args,
                  village: Village,
-                 pull_rate: float = 1 / 30,
+                 update_rate: float = 1 / 30,
                  **kwargs
                  ) -> None:
         tk.Tk.__init__(self, *args, **kwargs)
 
         self._village = village
         self._running = True
-        self._pull_rate = pull_rate
+        self._update_rate = update_rate
 
 
 
@@ -84,7 +84,7 @@ class UIManager(tk.Tk):
             self.update()
 
             elapsed = time.time() - last
-            if elapsed < self._pull_rate:
+            if elapsed < self._update_rate:
                 continue
 
             self._tick()

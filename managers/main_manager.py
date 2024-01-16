@@ -14,13 +14,15 @@ class MainManager:
     Main Manager
     """
     def __init__(self) -> None:
-        village = Village.create_village()
+        village = Village.create_village("Frankfurt", 1_000_000)
+        # with open("saves/tust.vss", "rb") as file:
+        #     village = Village.load(file)
 
         self._current_state = managers.states.State.ERROR
 
         # set up managers
         self._ui_manager = managers.ui_manager.UIManager(village=village)
-        self._game_manager = managers.game_manager.GameManager(village)
+        self._game_manager = managers.game_manager.GameManager(village=village)
 
         # subscribe to events
         self._ui_manager.subscribe_quit(self.quit)
@@ -53,3 +55,10 @@ class MainManager:
             match key:
                 case "space":
                     self._game_manager.pause()
+                case "s":
+                    self._game_manager.save()
+                case "l":
+                    with open("saves/tust.vss", "rb") as file:
+                        village = Village.load(file)
+                        self._game_manager._village = village
+                        self._ui_manager._village = village

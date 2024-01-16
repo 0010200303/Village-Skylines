@@ -86,6 +86,9 @@ class GameFrame(DFrame):
     def __init__(self, parent, controller: "UIManager"):
         DFrame.__init__(self, parent)
 
+        self._name_lbl = tk.Label(self, text="name_lbl")
+        self._name_lbl.pack()
+
         self._date_lbl = tk.Label(self, text="date_lbl")
         self._date_lbl.pack()
 
@@ -99,6 +102,8 @@ class GameFrame(DFrame):
         """
         Update displayed data like money_lbl and population_lbl
         """
+        self._name_lbl.configure(text=village.name)
+
         self._date_lbl.configure(text=f"date: {village.get_date_str()}")
         self._money_lbl.configure(text=f"money: {format(village.money, '.2f')}")
         self._population_lbl.configure(text=f"population: {str(village.population)}")

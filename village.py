@@ -4,6 +4,8 @@ Village class
 __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
 import random
+import io
+import struct
 
 import constants
 from villagers import Villager, Child, Adult, Senior
@@ -16,41 +18,35 @@ class Village:
     Village class
     """
     def __init__(self,
+                 name: str,
                  start_money: float,
                  villagers: set[Villager],
-                 seed: int = 1337,
                  day: int = 1,
                  month: int = 1,
-                 year: int = 2024) -> None:
+                 year: int = 2024,
+                 seed: int = 1337) -> None:
         random.seed(seed)
+
+        self._name = name
+        self._money = start_money
+
+        self._children = {v for v in villagers if isinstance(v, Child)}
+        self._adults = {v for v in villagers if isinstance(v, Adult)}
+        self._seniors = {v for v in villagers if isinstance(v, Senior)}
+
+        self._children.update([v for v in villagers \
+                               if type(v) is Villager and v.age < constants.ADULT_AGE])
+        self._adults.update([v for v in villagers if \
+                             type(v) is Villager and v.age < constants.SENIOR_AGE])
+        self._seniors.update([v for v in villagers if \
+                              type(v) is Village and v.age >= constants.SENIOR_AGE])
 
         self._day = day
         self._month = month
         self._year = year
 
-        self._money = start_money
-
-        self._children = set()
-        self._adults = set()
-        self._seniors = set()
-
-        for villager in villagers:
-            if isinstance(villager, Child):
-                self._children.add(villager)
-            elif isinstance(villager, Adult):
-                self._adults.add(villager)
-            elif isinstance(villager, Senior):
-                self._seniors.add(villager)
-            else:
-                if villager.age < constants.ADULT_AGE:
-                    self._children.add(Child(villager.name, villager.age, villager.happiness))
-                elif villager.age < constants.SENIOR_AGE:
-                    self._adults.add(Adult(villager.name, villager.age, villager.happiness, None))
-                else:
-                    self._seniors.add(Senior(villager.name, villager.age, villager.happiness))
-
     @classmethod
-    def create_village(cls, population_count: int = 10) -> "Village":
+    def create_village(cls, name: str, population_count: int = 10) -> "Village":
         """
         creates standard village
         """
@@ -58,7 +54,14 @@ class Village:
         for i in range(population_count):
             _villagers.add(Adult(str(i), 21 * 365, 100.0, Job("9to5", 16, 8)))
 
-        return cls(10_000, _villagers)
+        return cls(name, 10_000, _villagers)
+
+    @property
+    def name(self) -> str:
+        """
+        name getter
+        """
+        return self._name
 
     @property
     def money(self) -> float:
@@ -80,7 +83,6 @@ class Village:
         """
         return f"{str(self._day)}.{str(self._month)}.{self._year}"
 
-    # TODO: implement
     def income_tax(self, money: float) -> float:
         """
         calculate income tax
@@ -100,6 +102,66 @@ class Village:
                 self._month = 1
 
                 self._year += 1
+
+    def save(self, file: io.BufferedWriter) -> None:
+        """
+        save village to file
+        """
+        # name
+        file.write(struct.pack(">B", len(self._name)) + bytes(self._name, "utf-8"))
+
+        # money
+        file.write(struct.pack(">d", self._money))
+
+        # children
+        file.write(struct.pack(">i", len(self._children)))
+        for child in self._children:
+            child.save(file)
+
+        # adults
+        file.write(struct.pack(">i", len(self._adults)))
+        for adult in self._adults:
+            adult.save(file)
+
+        # seniors
+        file.write(struct.pack(">i", len(self._seniors)))
+        for senior in self._seniors:
+            senior.save(file)
+
+        # date
+        file.write(struct.pack(">BBI", self._day, self._month, self._year))
+
+        # TODO: save random state
+
+    @classmethod
+    def load(cls, file: io.BufferedReader) -> "Village":
+        """
+        load Village from file
+        """
+        # name
+        [temp_length] = struct.unpack(">B", file.read(1))
+        name = file.read(temp_length).decode()
+
+        # money
+        [money] = struct.unpack(">d", file.read(8))
+
+        villagers = []
+        # children
+        [children_count] = struct.unpack(">i", file.read(4))
+        villagers.extend([Child.load(file) for _ in range(children_count)])
+
+        # adults
+        [adult_count] = struct.unpack(">i", file.read(4))
+        villagers.extend([Adult.load(file) for _ in range(adult_count)])
+
+        # seniors
+        [senior_count] = struct.unpack(">i", file.read(4))
+        villagers.extend([Senior.load(file) for _ in range(senior_count)])
+
+        # date
+        [day, month, year] = struct.unpack(">BBI", file.read(6))
+
+        return cls(name, money, villagers, day, month, year)
 
     def _tick_day(self) -> None:
         """
@@ -127,9 +189,8 @@ class Village:
             senior.age += 1
             senior.happiness -= 0.05
 
-            # TODO: better implementation
             # die
-            if random.randint(0, constants.MAX_AGE) <= senior.age:
+            if random.randint(0, constants.MAX_AGE) >= 120 - senior.age:
                 seniors_to_remove.add(senior)
                 continue
 

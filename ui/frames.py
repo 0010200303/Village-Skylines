@@ -76,7 +76,7 @@ class MainMenuFrame(DFrame):
         quit_btn = ttk.Button(self,
                               style="Quit.TButton",
                               text="Quit",
-                              command=controller._on_quit)
+                              command=controller._call_on_quit)
         quit_btn.pack(side=tk.TOP, pady=10)
 
 class GameFrame(DFrame):
@@ -86,17 +86,21 @@ class GameFrame(DFrame):
     def __init__(self, parent, controller: "UIManager"):
         DFrame.__init__(self, parent)
 
-        self._money_lbl = tk.Label(self, text="money_label")
+        self._date_lbl = tk.Label(self, text="date_lbl")
+        self._date_lbl.pack()
+
+        self._money_lbl = tk.Label(self, text="money_lbl")
         self._money_lbl.pack()
 
-        self._population_lbl = tk.Label(self, text="population_label")
+        self._population_lbl = tk.Label(self, text="population_lbl")
         self._population_lbl.pack()
 
     def update_data(self, village: 'Village') -> None:
         """
         Update displayed data like money_lbl and population_lbl
         """
+        self._date_lbl.configure(text=f"date: {village.get_date_str()}")
         self._money_lbl.configure(text=f"money: {format(village.money, '.2f')}")
-        self._population_lbl.config(text=f"population: {str(village.population)}")
+        self._population_lbl.configure(text=f"population: {str(village.population)}")
 
 ALL_FRAMES = (MainMenuFrame, GameFrame)

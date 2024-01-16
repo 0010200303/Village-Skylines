@@ -23,11 +23,11 @@ class MainManager:
         self._game_manager = managers.game_manager.GameManager(village)
 
         # subscribe to events
-        self._ui_manager.on_quit(self.quit)
-        self._ui_manager.on_state_changed(self.on_state_changed)
-        self._ui_manager.on_key_pressed(self.on_key_pressed)
+        self._ui_manager.subscribe_quit(self.quit)
+        self._ui_manager.subscribe_state_changed(self.on_state_changed)
+        self._ui_manager.subscribe_key_pressed(self.on_key_pressed)
 
-        self._ui_manager.after(0, self._game_manager.start)
+        self._ui_manager.after(10, self._game_manager.start)
         self._ui_manager.run()
 
     def quit(self) -> None:

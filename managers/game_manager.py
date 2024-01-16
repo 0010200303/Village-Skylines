@@ -27,7 +27,7 @@ class GameManager(threading.Thread):
         while not self.__stop:
             while self._running:
                 elapsed = time.time() - last
-                if elapsed < 1.0:
+                if elapsed < 0.1:
                     continue
 
                 self._tick()

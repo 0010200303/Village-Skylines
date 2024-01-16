@@ -9,6 +9,8 @@ import constants
 from villagers import Villager, Child, Adult, Senior
 from jobs import Job
 
+CALLENDER = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
 class Village:
     """
     Village class
@@ -16,8 +18,15 @@ class Village:
     def __init__(self,
                  start_money: float,
                  villagers: set[Villager],
-                 seed: int = 1337) -> None:
+                 seed: int = 1337,
+                 day: int = 1,
+                 month: int = 1,
+                 year: int = 2024) -> None:
         random.seed(seed)
+
+        self._day = day
+        self._month = month
+        self._year = year
 
         self._money = start_money
 
@@ -65,6 +74,12 @@ class Village:
         """
         return len(self._children) + len(self._adults) + len(self._seniors)
 
+    def get_date_str(self) -> str:
+        """
+        returns the current date as a string
+        """
+        return f"{str(self._day)}.{str(self._month)}.{self._year}"
+
     # TODO: implement
     def income_tax(self, money: float) -> float:
         """
@@ -76,6 +91,22 @@ class Village:
         """
         tick
         """
+        self._tick_day()
+        if self._day > CALLENDER[self._month - 1]:
+            self._day = 1
+
+            self._tick_month()
+            if self._month > 12:
+                self._month = 1
+
+                self._year += 1
+
+    def _tick_day(self) -> None:
+        """
+        day tick
+        """
+        self._day += 1
+
         children_to_remove = set()
         children_to_add = set()
         seniors_to_remove = set()
@@ -96,8 +127,9 @@ class Village:
             senior.age += 1
             senior.happiness -= 0.05
 
+            # TODO: better implementation
             # die
-            if random.randint(0, constants.MAX_AGE) >= senior.age:
+            if random.randint(0, constants.MAX_AGE) <= senior.age:
                 seniors_to_remove.add(senior)
                 continue
 
@@ -115,6 +147,7 @@ class Village:
                 adults_to_remove.add(adult)
                 seniors_to_add.add(Senior(adult.name, adult.age, adult.happiness))
 
+        # update lists
         self._children -= children_to_remove
         self._children.update(children_to_add)
 
@@ -123,6 +156,12 @@ class Village:
 
         self._adults -= adults_to_remove
         self._adults.update(adults_to_add)
+
+    def _tick_month(self) -> None:
+        """
+        month tick
+        """
+        self._month += 1
 
         self._money += sum(adult.income_from_tax for adult in self._adults) \
                         * constants.INCOME_TAX_PORTION

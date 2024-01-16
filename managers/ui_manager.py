@@ -31,8 +31,8 @@ class UIManager(tk.Tk):
 
         self.title("Village Sklyines")
         self.geometry("800x600")
-        self.protocol("WM_DELETE_WINDOW", self._on_quit)
-        self.bind("<KeyPress>", self._on_key_pressed)
+        self.protocol("WM_DELETE_WINDOW", self._call_on_quit)
+        self.bind("<KeyPress>", self._call_on_key_pressed)
 
         self._container = tk.Frame(self)
         self._container.pack(side="top", fill="both", expand=True)
@@ -73,7 +73,7 @@ class UIManager(tk.Tk):
         frame.enable()
         frame.tkraise()
         self._current_frame = frame
-        self._on_state_changed(state)
+        self._call_on_state_changed(state)
 
     def run(self) -> None:
         """
@@ -108,40 +108,40 @@ class UIManager(tk.Tk):
         if self._current_state == State.IN_GAME:
             self._current_frame.update_data(self._village)
 
-    def _on_quit(self) -> None:
+    def _call_on_quit(self) -> None:
         """
         Call subscripted functions
         """
         for func in self._on_quit_functions:
             func()
 
-    def on_quit(self, func: callable) -> None:
+    def subscribe_quit(self, func: callable) -> None:
         """
         assign function to quit event
         """
         self._on_quit_functions.add(func)
 
-    def _on_state_changed(self, state: State) -> None:
+    def _call_on_state_changed(self, state: State) -> None:
         """
         Call subscripted functions
         """
         for func in self._on_state_changed_functions:
             func(state)
 
-    def on_state_changed(self, func: callable) -> None:
+    def subscribe_state_changed(self, func: callable) -> None:
         """
         Subscribe function to event
         """
         self._on_state_changed_functions.add(func)
 
-    def _on_key_pressed(self, event: tk.Event) -> None:
+    def _call_on_key_pressed(self, event: tk.Event) -> None:
         """
         Call subscripted functions
         """
         for func in self._on_key_pressed_functions:
             func(event.keysym)
 
-    def on_key_pressed(self, func: callable) -> None:
+    def subscribe_key_pressed(self, func: callable) -> None:
         """
         Subscribe function to event
         """

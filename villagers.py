@@ -58,3 +58,5 @@ class Senior(Villager):
                  age: int,
                  happiness: float) -> None:
         super(Senior, self).__init__(name, age, happiness)
+
+# test

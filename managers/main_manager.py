@@ -14,7 +14,7 @@ class MainManager:
     Main Manager
     """
     def __init__(self) -> None:
-        village = Village.create_village("Frankfurt", 1_000_000)
+        village = Village.create_village("Frankfurt", 1_000)
         # with open("saves/tust.vss", "rb") as file:
         #     village = Village.load(file)
 

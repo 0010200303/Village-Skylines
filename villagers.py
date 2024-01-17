@@ -97,7 +97,12 @@ class Adult(Villager):
                  happiness: float,
                  job: Job) -> None:
         super(Adult, self).__init__(name, age, happiness)
-        self.job = job
+        self._job = job
+
+        if self._job is None:
+            self._income = 0.0
+        else:
+            self._income = self._job.income * 0.14
 
     # TODO: implement full income tax
     @property
@@ -105,9 +110,7 @@ class Adult(Villager):
         """
         get income from job
         """
-        if self.job is None:
-            return 0
-        return self.job.income * 0.14
+        return self._income
 
     def save(self, file: io.BufferedWriter) -> None:
         """

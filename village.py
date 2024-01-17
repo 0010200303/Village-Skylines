@@ -9,6 +9,7 @@ import struct
 
 import constants
 from villagers import Villager, Child, Adult, Senior
+from buildings import Building, House, Business
 from jobs import Job
 
 CALLENDER = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -21,6 +22,7 @@ class Village:
                  name: str,
                  start_money: float,
                  villagers: set[Villager],
+                 buildings: set[Building],
                  day: int = 1,
                  month: int = 1,
                  year: int = 2024,
@@ -41,6 +43,9 @@ class Village:
         self._seniors.update([v for v in villagers if \
                               type(v) is Village and v.age >= constants.SENIOR_AGE])
 
+        self._houses = {b for b in buildings if isinstance(b, House)}
+        self._businesses = {b for b in buildings if isinstance(b, Business)}
+
         self._day = day
         self._month = month
         self._year = year
@@ -50,11 +55,12 @@ class Village:
         """
         creates standard village
         """
-        _villagers = set()
-        for i in range(population_count):
-            _villagers.add(Adult(str(i), 21 * 365, 100.0, Job("9to5", 16, 8)))
+        villagers = {Adult(str(i), 21 * 365, 100.0, Job("9to5", 16, 8)) for i in range(population_count)}
+        buildings = set()
+        buildings.update({House(str(i), (10, 10), (0, 0)) for i in range(population_count // 4)})
+        buildings.update({Business(str(i), (10, 10), (0, 0)) for i in range(population_count // 100)})
 
-        return cls(name, 10_000, _villagers)
+        return cls(name, 10_000, villagers, buildings)
 
     @property
     def name(self) -> str:
@@ -88,20 +94,6 @@ class Village:
         calculate income tax
         """
         return money * 0.14
-
-    def tick(self) -> None:
-        """
-        tick
-        """
-        self._tick_day()
-        if self._day > CALLENDER[self._month - 1]:
-            self._day = 1
-
-            self._tick_month()
-            if self._month > 12:
-                self._month = 1
-
-                self._year += 1
 
     def save(self, file: io.BufferedWriter) -> None:
         """
@@ -163,6 +155,20 @@ class Village:
 
         return cls(name, money, villagers, day, month, year)
 
+    def tick(self) -> None:
+        """
+        tick
+        """
+        self._tick_day()
+        if self._day > CALLENDER[self._month - 1]:
+            self._day = 1
+
+            self._tick_month()
+            if self._month > 12:
+                self._month = 1
+
+                self._year += 1
+
     def _tick_day(self) -> None:
         """
         day tick
@@ -208,6 +214,10 @@ class Village:
                 adults_to_remove.add(adult)
                 seniors_to_add.add(Senior(adult.name, adult.age, adult.happiness))
 
+        for business in self._businesses:
+            if random.random() > 0.99:
+                business.active = False
+
         # update lists
         self._children -= children_to_remove
         self._children.update(children_to_add)
@@ -226,3 +236,6 @@ class Village:
 
         self._money += sum(adult.income_from_tax for adult in self._adults) \
                         * constants.INCOME_TAX_PORTION
+
+        self._money += sum(house.income for house in self._houses)
+        self._money += sum(business.income for business in self._businesses if business.active)

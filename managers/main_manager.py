@@ -62,3 +62,11 @@ class MainManager:
                         village = Village.load(file)
                         self._game_manager._village = village
                         self._ui_manager._village = village
+                case "1":
+                    self._game_manager.update_rate = 1 / 1
+                case "2":
+                    self._game_manager.update_rate = 1 / 2
+                case "3":
+                    self._game_manager.update_rate = 1 / 5
+                case "4":
+                    self._game_manager.update_rate = 1 / 10

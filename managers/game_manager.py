@@ -18,7 +18,7 @@ class GameManager(threading.Thread):
 
         self._village = village
         self._running = False
-        self._update_rate = update_rate
+        self.update_rate = update_rate
 
     def run(self) -> None:
         """
@@ -28,7 +28,7 @@ class GameManager(threading.Thread):
         while not self.__stop:
             while self._running:
                 elapsed = time.time() - last
-                if elapsed < self._update_rate:
+                if elapsed < self.update_rate:
                     continue
 
                 self._tick()

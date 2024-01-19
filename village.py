@@ -55,12 +55,15 @@ class Village:
         """
         creates standard village
         """
-        villagers = {Adult(str(i), 21 * 365, 100.0, Job("9to5", 16, 8)) for i in range(population_count)}
+        villagers = {Adult(str(i), 21 * 365, 100.0, None) for i in range(population_count)}
+
+        jobs = {Job("9to5", 16, 8, 20): 2}
+        
         buildings = set()
         buildings.update({House(str(i), (10, 10), (0, 0)) for i in range(population_count // 4)})
-        buildings.update({Business(str(i), (10, 10), (0, 0)) for i in range(population_count // 100)})
+        buildings.update({Business(str(i), (10, 10), (0, 0), dict(jobs)) for i in range(population_count // 100)})
 
-        return cls(name, 10_000, villagers, buildings)
+        return cls(name, 10_000, villagers, buildings, day=30)
 
     @property
     def name(self) -> str:
@@ -206,11 +209,15 @@ class Village:
 
             # leave
             if adult.happiness <= constants.MIN_HAPPINESS:
+                adult.loose_job()
+
                 adults_to_remove.add(adult)
                 continue
 
             # pension
             if adult.age >= constants.SENIOR_AGE:
+                adult.loose_job()
+
                 adults_to_remove.add(adult)
                 seniors_to_add.add(Senior(adult.name, adult.age, adult.happiness))
 
@@ -239,3 +246,11 @@ class Village:
 
         self._money += sum(house.income for house in self._houses)
         self._money += sum(business.income for business in self._businesses if business.active)
+
+        for adult in self._adults:
+            if adult.job is not None:
+                continue
+
+            for business in self._businesses:
+                if business.try_acquire_job(adult) is True:
+                    break

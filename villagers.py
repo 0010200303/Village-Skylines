@@ -5,8 +5,13 @@ __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
 import io
 import struct
+from typing import TYPE_CHECKING
 
 from jobs import Job
+
+# includes only needed for typing
+if TYPE_CHECKING:
+    from buildings import Business
 
 class Villager:
     """
@@ -95,18 +100,46 @@ class Adult(Villager):
                  name: str,
                  age: int,
                  happiness: float,
-                 job: Job) -> None:
+                 job: Job = None,
+                 workplace: "Business" = None) -> None:
         super(Adult, self).__init__(name, age, happiness)
         self._job = job
+        self._workplace = workplace
 
         if self._job is None:
             self._income = 0.0
         else:
             self._income = self._job.income * 0.14
 
+    @property
+    def job(self) -> Job:
+        """
+        job getter
+        """
+        return self._job
+
+    def set_job(self, job: Job, workplace: "Business" = None) -> None:
+        """
+        job setter
+        """
+        self._job = job
+        if job is None:
+            self._income = 0.0
+            self._workplace = None
+            return
+
+        self._income = job.income
+        self._workplace = workplace
+    
+    def loose_job(self) -> None:
+        """
+        loose job
+        """
+        self._workplace.loose_job(self)
+
     # TODO: implement full income tax
     @property
-    def income_from_tax(self):
+    def income_from_tax(self) -> float:
         """
         get income from job
         """

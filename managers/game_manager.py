@@ -12,7 +12,7 @@ class GameManager(threading.Thread):
     """
     Game Manager
     """
-    def __init__(self, village: Village, update_rate: float = 1 / 100000) -> None:
+    def __init__(self, village: Village, update_rate: float = 1 / 1) -> None:
         threading.Thread.__init__(self)
         self.__stop = False
 

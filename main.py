@@ -5,7 +5,6 @@ __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
 from managers.main_manager import MainManager
 
-
 def main() -> None:
     """
     main

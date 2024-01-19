@@ -12,12 +12,13 @@ class GameManager(threading.Thread):
     """
     Game Manager
     """
-    def __init__(self, village: Village) -> None:
+    def __init__(self, village: Village, update_rate: float = 1 / 100000) -> None:
         threading.Thread.__init__(self)
         self.__stop = False
 
         self._village = village
         self._running = False
+        self._update_rate = update_rate
 
     def run(self) -> None:
         """
@@ -27,7 +28,7 @@ class GameManager(threading.Thread):
         while not self.__stop:
             while self._running:
                 elapsed = time.time() - last
-                if elapsed < 0.1:
+                if elapsed < self._update_rate:
                     continue
 
                 self._tick()
@@ -53,3 +54,11 @@ class GameManager(threading.Thread):
         pause the game
         """
         self._running = not self._running
+
+    def save(self) -> None:
+        """
+        saves the current game
+        """
+        with open("saves/tust.vss", "wb") as file:
+            self._village.save(file)
+        print("saved game!")

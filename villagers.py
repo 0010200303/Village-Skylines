@@ -130,12 +130,13 @@ class Adult(Villager):
 
         self._income = job.income
         self._workplace = workplace
-    
+
     def loose_job(self) -> None:
         """
         loose job
         """
-        self._workplace.loose_job(self)
+        if self._workplace is not None:
+            self._workplace.loose_job(self)
 
     # TODO: implement full income tax
     @property

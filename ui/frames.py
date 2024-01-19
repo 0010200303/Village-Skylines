@@ -14,12 +14,33 @@ if TYPE_CHECKING:
     from managers.ui_manager import UIManager
     from village import Village
 
-class DFrame(tk.Frame):
+class DFrame(ttk.Frame):
     """
     Frame that can be disable and enabled
     """
+    style = None
+
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
+        ttk.Frame.__init__(self, parent)
+
+        if self.style is None:
+            self.style = ttk.Style()
+            self.style.configure("MainFrame.TFrame",
+                                 background="pink")
+            self.style.configure("Title.TLabel",
+                                 foreground="Purple",
+                                 background="pink",
+                                 font=("Comic Sans ms", 72))
+            self.style.configure("Start.TButton",
+                                 foreground="green",
+                                 font=("Comic Sans MS", 16),
+                                 borderwidth=8,
+                                 relief=tk.RAISED)
+            self.style.configure("Quit.TButton",
+                                 foreground="red",
+                                 font=("Comic Sans MS", 16),
+                                 borderwidth=8,
+                                 relief=tk.RAISED)
 
     def _change_state(self, state: str) -> None:
         """
@@ -47,22 +68,7 @@ class MainMenuFrame(DFrame):
     def __init__(self, parent, controller: "UIManager"):
         DFrame.__init__(self, parent)
 
-        background_color = "pink"
-        self.configure(background=background_color)
-
-        style = ttk.Style()
-        style.configure("Title.TLabel",
-                        foreground="Purple",
-                        background=background_color,
-                        font=("Comic Sans ms", 72))
-        style.configure("Start.TButton",
-                        foreground="green",
-                        font=("Comic Sans MS", 16),
-                        borderwidth=8)
-        style.configure("Quit.TButton",
-                        foreground="red",
-                        font=("Comic Sans MS", 16),
-                        borderwidth=8)
+        self.configure(style="MainFrame.TFrame")
 
         title_lbl = ttk.Label(self, style="Title.TLabel", text="Village Skylines")
         title_lbl.pack(side=tk.TOP, pady=20)

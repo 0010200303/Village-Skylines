@@ -9,7 +9,6 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
 from typing import TYPE_CHECKING
-from PIL import ImageTk, Image
 
 from managers.states import State
 
@@ -230,35 +229,35 @@ class GameFrame(DFrame):
         self._date_lbl = ttk.Label(resources_frame, text="date_lbl")
         self._date_lbl.pack(side=tk.RIGHT)
 
-        self._money_img = ImageTk.PhotoImage(Image.open("ui/images/money_icon.png"))
+        self._money_img = tk.PhotoImage(file="ui/images/money_icon.png")
         self._money_lbl = ttk.Label(resources_frame,
                                     text="money_lbl",
                                     image=self._money_img,
                                     compound=tk.LEFT)
         self._money_lbl.pack(side=tk.LEFT)
 
-        self._population_img = ImageTk.PhotoImage(Image.open("ui/images/population_icon.png"))
+        self._population_img = tk.PhotoImage(file="ui/images/population_icon.png")
         self._population_lbl = ttk.Label(resources_frame,
                                          text="population_lbl",
                                          image=self._population_img,
                                          compound=tk.LEFT)
         self._population_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
-        self._happiness_img = ImageTk.PhotoImage(Image.open("ui/images/happiness_icon.png"))
+        self._happiness_img = tk.PhotoImage(file="ui/images/happiness_icon.png")
         self._happiness_lbl = ttk.Label(resources_frame,
                                         text="happiness_lbl",
                                         image=self._happiness_img,
                                         compound=tk.LEFT)
         self._happiness_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
-        self._appeal_img = ImageTk.PhotoImage(Image.open("ui/images/appeal_icon.png"))
+        self._appeal_img = tk.PhotoImage(file="ui/images/appeal_icon.png")
         self._appeal_lbl = ttk.Label(resources_frame,
                                       text="appeal_lbl",
                                       image=self._appeal_img,
                                       compound=tk.LEFT)
         self._appeal_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
-        self._speed_img = ImageTk.PhotoImage(Image.open("ui/images/speed_icon.png"))
+        self._speed_img = tk.PhotoImage(file="ui/images/speed_icon.png")
         self._speed_lbl = ttk.Label(resources_frame,
                                     text="speed_lbl",
                                     image=self._speed_img,

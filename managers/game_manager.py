@@ -12,10 +12,14 @@ class GameManager(threading.Thread):
     """
     Game Manager
     """
-    def __init__(self, village: Village, update_rate: float = 1 / 1) -> None:
+    def __init__(self,
+                 main_manager,
+                 village: Village,
+                 update_rate: float = 1 / 1) -> None:
         threading.Thread.__init__(self)
         self.__stop = False
 
+        self._main_manager = main_manager
         self._village = village
         self._running = False
         self.update_rate = update_rate
@@ -53,12 +57,24 @@ class GameManager(threading.Thread):
         """
         pause the game
         """
+        self._running = False
+
+    def continue_(self) -> None:
+        """
+        continue the game
+        """
+        self._running = True
+
+    def toggle(self) -> None:
+        """
+        toggle running the game
+        """
         self._running = not self._running
 
     def save(self) -> None:
         """
         saves the current game
         """
-        with open("saves/tust.vss", "wb") as file:
+        with open(f"saves/{self._village.name}.vss", "wb") as file:
             self._village.save(file)
         print("saved game!")

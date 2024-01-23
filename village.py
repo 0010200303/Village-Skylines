@@ -86,6 +86,22 @@ class Village:
         """
         return len(self._children) + len(self._adults) + len(self._seniors)
 
+    @property
+    def total_happiness(self) -> float:
+        """
+        total happiness getter
+        """
+        return (sum(child.happiness for child in self._children) + \
+                sum(adult.happiness for adult in self._adults) + \
+                sum(senior.happiness for senior in self._seniors)) / self.population
+
+    @property
+    def appeal(self) -> float:
+        """
+        appeal getter
+        """
+        return 0.0
+
     def get_date_str(self) -> str:
         """
         returns the current date as a string
@@ -108,23 +124,25 @@ class Village:
         # money
         file.write(struct.pack(">d", self._money))
 
-        # children
+        # date
+        file.write(struct.pack(">BBI", self._day, self._month, self._year))
+
+        # preview stats
+        file.write(struct.pack(">ff", self.total_happiness, self.appeal))
+
+        # villagers
         file.write(struct.pack(">i", len(self._children)))
+        file.write(struct.pack(">i", len(self._adults)))
+        file.write(struct.pack(">i", len(self._seniors)))
+
         for child in self._children:
             child.save(file)
 
-        # adults
-        file.write(struct.pack(">i", len(self._adults)))
         for adult in self._adults:
             adult.save(file)
 
-        # seniors
-        file.write(struct.pack(">i", len(self._seniors)))
         for senior in self._seniors:
             senior.save(file)
-
-        # date
-        file.write(struct.pack(">BBI", self._day, self._month, self._year))
 
         # TODO: save random state
 
@@ -140,23 +158,24 @@ class Village:
         # money
         [money] = struct.unpack(">d", file.read(8))
 
-        villagers = []
-        # children
-        [children_count] = struct.unpack(">i", file.read(4))
-        villagers.extend([Child.load(file) for _ in range(children_count)])
-
-        # adults
-        [adult_count] = struct.unpack(">i", file.read(4))
-        villagers.extend([Adult.load(file) for _ in range(adult_count)])
-
-        # seniors
-        [senior_count] = struct.unpack(">i", file.read(4))
-        villagers.extend([Senior.load(file) for _ in range(senior_count)])
-
         # date
         [day, month, year] = struct.unpack(">BBI", file.read(6))
 
-        return cls(name, money, villagers, day, month, year)
+        # skip preview stats
+        file.read(8)
+
+        # villagers
+        villagers = []
+
+        [children_count] = struct.unpack(">i", file.read(4))
+        [adult_count] = struct.unpack(">i", file.read(4))
+        [senior_count] = struct.unpack(">i", file.read(4))
+
+        villagers.extend([Child.load(file) for _ in range(children_count)])
+        villagers.extend([Adult.load(file) for _ in range(adult_count)])
+        villagers.extend([Senior.load(file) for _ in range(senior_count)])
+
+        return cls(name, money, villagers, [], day, month, year)
 
     def tick(self) -> None:
         """

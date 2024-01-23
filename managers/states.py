@@ -11,4 +11,7 @@ class State(Enum):
     """
     ERROR = 0
     MAIN_MENU = 1
-    IN_GAME = 2
+    LOAD_MENU = 2
+
+    INGAME = 3
+    INGAME_MENU = 4

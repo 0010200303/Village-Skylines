@@ -3,12 +3,17 @@ Village Skylines
 """
 __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
+import os
+
 from managers.main_manager import MainManager
 
 def main() -> None:
     """
     main
     """
+    if os.path.exists("saves") is False:
+        os.mkdir("saves")
+
     MainManager()
 
 def perf() -> None:

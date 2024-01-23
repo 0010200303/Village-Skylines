@@ -58,10 +58,11 @@ class Village:
         villagers = {Adult(str(i), 21 * 365, 100.0, None) for i in range(population_count)}
 
         jobs = {Job("9to5", 16, 8, 20): 2}
-        
+
         buildings = set()
         buildings.update({House(str(i), (10, 10), (0, 0)) for i in range(population_count // 4)})
-        buildings.update({Business(str(i), (10, 10), (0, 0), dict(jobs)) for i in range(population_count // 100)})
+        buildings.update({Business(str(i), (10, 10), (0, 0), dict(jobs)) \
+                          for i in range(population_count // 100)})
 
         return cls(name, 10_000, villagers, buildings, day=30)
 

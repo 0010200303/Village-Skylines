@@ -12,9 +12,10 @@ if TYPE_CHECKING:
     from managers.main_manager import MainManager
     from village import Village
 
+
 class FrameBase(ttk.Frame):
     """
-    Frame that can be disable and enabled
+    Frame that can be disabled and enabled
     """
     style = None
 
@@ -23,6 +24,7 @@ class FrameBase(ttk.Frame):
         self._main_manager = main_manager
         self._village = village
 
+        # sets styles
         if self.style is None:
             self.style = ttk.Style()
             self.style.configure("MainFrame.TFrame",
@@ -60,12 +62,12 @@ class FrameBase(ttk.Frame):
         """
         sort treeview column
         """
-        l = [(treeview.item(k, 'values')[column], k) for k in treeview.get_children('')]
-        l.sort(reverse=reverse)
+        list_ = [(treeview.item(k, 'values')[column], k) for k in treeview.get_children('')]
+        list_.sort(reverse=reverse)
 
-        for index, (_, k) in enumerate(l):
+        for index, (_, k) in enumerate(list_):
             treeview.move(k, '', index)
 
         # reverse sort next time
-        treeview.heading(column, command=lambda: \
+        treeview.heading(column, command=lambda:
                          self._treeview_sort_column(treeview, column, not reverse))

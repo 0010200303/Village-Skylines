@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from managers.main_manager import MainManager
     from village import Village
 
+
 class MainMenuFrame(FrameBase):
     """
     Main Menu Frame
@@ -24,21 +25,25 @@ class MainMenuFrame(FrameBase):
 
         self.configure(style="MainFrame.TFrame")
 
+        # title label
         title_lbl = ttk.Label(self, style="Title.TLabel", text="Village Skylines")
         title_lbl.pack(side=tk.TOP, pady=20)
 
+        # start button
         start_btn = ttk.Button(self,
                                style="MainMenu.TButton",
                                text="Start",
                                command=lambda: self._main_manager.change_state(State.INGAME))
         start_btn.pack(side=tk.TOP, pady=10)
 
+        # load button
         load_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Load",
                               command=lambda: self._main_manager.change_state(State.LOAD_MENU))
         load_btn.pack(side=tk.TOP, pady=10)
 
+        # quit button
         quit_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Quit",

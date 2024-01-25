@@ -24,27 +24,32 @@ class IngameMenuFrame(FrameBase):
 
         self.configure(style="MainFrame.TFrame")
 
+        # title lable
         title_lbl = ttk.Label(self, style="Title.TLabel", text="Pause")
         title_lbl.pack(side=tk.TOP, pady=20)
 
+        # continue button
         continue_btn = ttk.Button(self,
                                   style="MainMenu.TButton",
                                   text="Continue",
                                   command=lambda: self._main_manager.change_state(State.INGAME))
         continue_btn.pack(side=tk.TOP, padx=10, pady=10)
 
+        # save button
         save_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Save",
                               command=self._main_manager.save_game)
         save_btn.pack(side=tk.TOP, padx=10, pady=10)
 
+        # exit button
         exit_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Exit",
                               command=lambda: self._main_manager.change_state(State.MAIN_MENU))
         exit_btn.pack(side=tk.TOP, padx=10, pady=10)
 
+        # quit button
         quit_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Quit",

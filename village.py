@@ -16,6 +16,7 @@ from jobs import Job
 
 CALLENDER = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
+
 class Village:
     """
     Village class
@@ -36,7 +37,7 @@ class Village:
 
         self._families = families
 
-        self._buildings = {b.id: b for b in buildings if isinstance(b, House) is False \
+        self._buildings = {b.id: b for b in buildings if isinstance(b, House) is False
                            and isinstance(b, Business) is False}
         self._houses = {b.id: b for b in buildings if isinstance(b, House)}
         self._businesses = {b.id: b for b in buildings if isinstance(b, Business)}
@@ -58,14 +59,17 @@ class Village:
         """
         creates standard village
         """
-        families = {Family({Adult(f"Generic{str(j)}", 21 * 365, 100.0, None) for j in range(2)}) \
+        # creates families
+        families = {Family({Adult(f"Generic{str(j)}", 21 * 365, 100.0, None) for j in range(2)})
                     for i in range(population_count // 2)}
 
+        # initialise job
         jobs = {Job("9to5", 16, 8, 20): 4}
 
+        # update buildings
         buildings = set()
         buildings.update({House(i, str(i)) for i in range(population_count // 4)})
-        buildings.update({Business(i, str(i), jobs=dict(jobs)) \
+        buildings.update({Business(i, str(i), jobs=dict(jobs))
                           for i in range(population_count // 100)})
 
         return cls(name, 10_000, families, buildings, day=30)
@@ -95,6 +99,7 @@ class Village:
     def mean_happiness(self) -> float:
         """
         total happiness getter
+        calculates the mean happiness from all villager
         """
         if len(self._families) <= 0:
             return 0.0
@@ -194,6 +199,7 @@ class Village:
         # villagers
         villagers = []
 
+        # unpacks villagers
         [children_count] = struct.unpack(">i", file.read(4))
         [adult_count] = struct.unpack(">i", file.read(4))
         [senior_count] = struct.unpack(">i", file.read(4))
@@ -208,11 +214,16 @@ class Village:
         """
         tick
         """
+        # one day
         self._tick_day()
+
+        # one month
         if self._day > CALLENDER[self._month - 1]:
             self._day = 1
 
             self._tick_month()
+
+            # one year
             if self._month > 12:
                 self._month = 1
 
@@ -228,7 +239,7 @@ class Village:
         list(map(lambda family: family.tick(), self._families))
 
         # remove families
-        families_to_remove = {family for family in self._families \
+        families_to_remove = {family for family in self._families
                               if family.mean_happiness <= constants.MIN_HAPPINESS}
         self._families -= families_to_remove
 
@@ -243,8 +254,9 @@ class Village:
         """
         self._month += 1
 
+        # updates money
         self._money += sum(house.income for house in self._houses.values())
-        self._money += sum(business.total_income for business in self._businesses.values() \
+        self._money += sum(business.total_income for business in self._businesses.values()
                            if business.active)
 
         # adults find job
@@ -260,12 +272,14 @@ class Village:
         """
         match building_type:
             case "<class \'buildings.Building\'>":
-                l = self._buildings
+                list_ = self._buildings
             case "<class \'buildings.House\'>":
-                l = self._houses
+                list_ = self._houses
             case "<class \'buildings.Business\'>":
-                l = self._businesses
-        building = l.pop(building_id)
+                list_ = self._businesses
+
+        building = list_.pop(building_id)
+
         if isinstance(building, Business):
             building.destroy()
 
@@ -273,15 +287,17 @@ class Village:
 
     def buy_building(self, building: Building) -> Building:
         """
-        buy building
+        buying building
         """
         if self._money < building.cost:
             return None
 
+        # subtract cost of building
         self._money -= building.cost
 
         new_building = copy.copy(building)
 
+        # looks what building has to be build
         if isinstance(new_building, House):
             new_building.id = len(self._houses)
             self._houses[new_building.id] = new_building
@@ -292,6 +308,7 @@ class Village:
             new_building.id = len(self._buildings)
             self._buildings[new_building.id] = new_building
 
+        # adds building
         self._appeal += new_building.appeal
 
         return new_building

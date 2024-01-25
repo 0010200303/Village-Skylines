@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from managers.main_manager import MainManager
     from village import Village
 
+
 class GameFrame(FrameBase):
     """
     Game Frame
@@ -24,12 +25,15 @@ class GameFrame(FrameBase):
 
         resources_frame = tk.Frame(self, relief=tk.RIDGE, borderwidth=1, padx=10, pady=2)
 
+        # name label
         self._name_lbl = ttk.Label(resources_frame, text="name_lbl")
         self._name_lbl.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
+        # date label
         self._date_lbl = ttk.Label(resources_frame, text="date_lbl")
         self._date_lbl.pack(side=tk.RIGHT)
 
+        # money image + label
         self._money_img = tk.PhotoImage(file="ui/images/money_icon.png")
         self._money_lbl = ttk.Label(resources_frame,
                                     text="money_lbl",
@@ -37,6 +41,7 @@ class GameFrame(FrameBase):
                                     compound=tk.LEFT)
         self._money_lbl.pack(side=tk.LEFT)
 
+        # population image + label
         self._population_img = tk.PhotoImage(file="ui/images/population_icon.png")
         self._population_lbl = ttk.Label(resources_frame,
                                          text="population_lbl",
@@ -44,6 +49,7 @@ class GameFrame(FrameBase):
                                          compound=tk.LEFT)
         self._population_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
+        # happiness image + label
         self._happiness_img = tk.PhotoImage(file="ui/images/happiness_icon.png")
         self._happiness_lbl = ttk.Label(resources_frame,
                                         text="happiness_lbl",
@@ -51,6 +57,7 @@ class GameFrame(FrameBase):
                                         compound=tk.LEFT)
         self._happiness_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
+        # appeal image + label
         self._appeal_img = tk.PhotoImage(file="ui/images/appeal_icon.png")
         self._appeal_lbl = ttk.Label(resources_frame,
                                       text="appeal_lbl",
@@ -58,6 +65,7 @@ class GameFrame(FrameBase):
                                       compound=tk.LEFT)
         self._appeal_lbl.pack(side=tk.LEFT, padx=(10, 0))
 
+        # speed image + label
         self._speed_img = tk.PhotoImage(file="ui/images/speed_icon.png")
         self._speed_lbl = ttk.Label(resources_frame,
                                     text="speed_lbl",
@@ -67,8 +75,7 @@ class GameFrame(FrameBase):
 
         resources_frame.pack(side=tk.TOP, fill=tk.X)
 
-
-
+        # window
         vertical_paned_window = ttk.PanedWindow(self, orient=tk.VERTICAL)
         horizontal_paned_window = ttk.PanedWindow(vertical_paned_window, orient=tk.HORIZONTAL)
         vertical_paned_window.pack(fill=tk.BOTH, expand=True)
@@ -79,9 +86,11 @@ class GameFrame(FrameBase):
         info_frame = ttk.Frame(vertical_paned_window, style="MainFrame.TFrame")
         info_frame.pack(fill=tk.BOTH, expand=True)
 
+        # building info
         self._building_info = ttk.Label(info_frame)
         self._building_info.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10)
 
+        # destroy button
         self._destroy_btn = ttk.Button(info_frame, text="Destroy", state=tk.DISABLED)
         self._destroy_btn.pack(side=tk.BOTTOM, anchor=tk.SE, padx=10, pady=10)
 
@@ -91,6 +100,7 @@ class GameFrame(FrameBase):
         buildings_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
         buildings_frame.pack(fill=tk.BOTH, expand=True)
 
+        # building label
         buildings_lbl = ttk.Label(buildings_frame, text="Village Buldings")
         buildings_lbl.pack(side=tk.TOP)
 
@@ -106,7 +116,7 @@ class GameFrame(FrameBase):
         self._buildings_list.bind("<<TreeviewSelect>>", self._display_building)
 
         for i, text in enumerate(columns):
-            self._buildings_list.heading(i, text=text, command=lambda column=i: \
+            self._buildings_list.heading(i, text=text, command=lambda column=i:
                                     self._treeview_sort_column(self._buildings_list, column, False))
 
         for building in self._village._buildings.values():
@@ -130,9 +140,11 @@ class GameFrame(FrameBase):
         shop_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
         shop_frame.pack(fill=tk.BOTH, expand=True)
 
+        # shop label
         shop_lbl = ttk.Label(shop_frame, text="Shop")
         shop_lbl.pack(side=tk.TOP)
 
+        # shop scrollbar
         columns = ("type", "name")
         shop_scrollbar = ttk.Scrollbar(shop_frame)
         self._shop_list = ttk.Treeview(shop_frame,
@@ -145,7 +157,7 @@ class GameFrame(FrameBase):
         self._shop_list.bind("<<TreeviewSelect>>", self._display_shop)
 
         for i, text in enumerate(columns):
-            self._shop_list.heading(i, text=text, command=lambda column=i: \
+            self._shop_list.heading(i, text=text, command=lambda column=i:
                               self._treeview_sort_column(self._shop_list, column, False))
 
         for building in Building.buildings:
@@ -169,12 +181,14 @@ class GameFrame(FrameBase):
         shop_info_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
         shop_info_frame.pack(fill=tk.BOTH, expand=True)
 
+        # shop info label
         shop_info_title_lbl = ttk.Label(shop_info_frame, text="Shop Info")
         shop_info_title_lbl.pack(side=tk.TOP)
 
         self._shop_info_lbl = ttk.Label(shop_info_frame)
         self._shop_info_lbl.pack(side=tk. TOP, anchor=tk.NW, padx=4, pady=4)
 
+        # buy button
         self._buy_btn = ttk.Button(shop_info_frame, text="Buy", state=tk.DISABLED)
         self._buy_btn.pack(side=tk.BOTTOM, anchor=tk.SE, padx=10, pady=10)
 
@@ -192,7 +206,7 @@ class GameFrame(FrameBase):
         self._happiness_lbl.configure(text=format(self._village.mean_happiness, '.2f'))
         self._appeal_lbl.configure(text=format(self._village.appeal, '.2f'))
 
-    def set_speed(self, speed:int) -> None:
+    def set_speed(self, speed: int) -> None:
         """
         sets current game speed to display
         """
@@ -205,13 +219,14 @@ class GameFrame(FrameBase):
         if len(self._buildings_list.selection()) <= 0:
             return
 
-        building_type, building_id = self._buildings_list.item(\
+        building_type, building_id = self._buildings_list.item(
             self._buildings_list.selection()[0], "tags")
         building_id = int(building_id)
 
-        self._destroy_btn.configure(state=tk.NORMAL, command=lambda: \
+        self._destroy_btn.configure(state=tk.NORMAL, command=lambda:
                                     self._destroy_building(self._buildings_list.selection()[0]))
 
+        # checks kind of building
         match building_type:
             case "<class \'buildings.Building\'>":
                 building = self._village.buildings[building_id]
@@ -235,6 +250,7 @@ class GameFrame(FrameBase):
         building_type, building_id = self._buildings_list.item(selection)["tags"]
         building_id = int(building_id)
 
+        #checks type of building
         match building_type:
             case "<class \'buildings.Building\'>":
                 l = self._village.buildings
@@ -252,7 +268,7 @@ class GameFrame(FrameBase):
 
     def _display_shop(self, _event: tk.Event) -> None:
         """
-        display bulding from shop
+        display building from shop
         """
         if len(self._shop_list.selection()) <= 0:
             return
@@ -260,9 +276,10 @@ class GameFrame(FrameBase):
         building_type, building_id = self._shop_list.item(self._shop_list.selection()[0], "tags")
         building_id = int(building_id)
 
-        self._buy_btn.configure(state=tk.NORMAL, command=lambda: \
+        self._buy_btn.configure(state=tk.NORMAL, command=lambda:
                                 self._buy_building(self._shop_list.selection()[0]))
 
+        # checks building
         match building_type:
             case "<class \'buildings.Building\'>":
                 building = Building.buildings[building_id]
@@ -281,11 +298,12 @@ class GameFrame(FrameBase):
 
     def _buy_building(self, selection) -> None:
         """
-        buy building
+        buying building
         """
         building_type, building_id = self._shop_list.item(selection)["tags"]
         building_id = int(building_id)
 
+        # checks building
         match building_type:
             case "<class \'buildings.Building\'>":
                 building = Building.buildings[building_id]

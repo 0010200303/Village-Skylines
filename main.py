@@ -7,6 +7,7 @@ import os
 
 from managers.main_manager import MainManager
 
+
 def main() -> None:
     """
     main
@@ -16,9 +17,10 @@ def main() -> None:
 
     MainManager()
 
+
 def perf() -> None:
     """
-    perfomance test
+    performance test
     """
     import timeit
     from village import Village
@@ -31,6 +33,7 @@ def perf() -> None:
 
     village = Village.create_village("100.000", population_count=100_000)
     print(f"pop: 100.000\t\t{timeit.timeit(village.tick, number=1)}")
+
 
 if __name__ == "__main__":
     main()

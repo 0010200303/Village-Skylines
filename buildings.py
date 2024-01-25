@@ -10,6 +10,7 @@ from family import Family
 from villagers import Adult
 import constants
 
+
 class Building:
     """
     Building class
@@ -84,6 +85,7 @@ class Building:
         with open("data/buildings.json", encoding="utf-8") as file:
             data = json.load(file)
 
+            # initialize general buildings
             Building.buildings = []
             for i, building in enumerate(data["buildings"]):
                 Building.buildings.append(Building(i,
@@ -91,6 +93,7 @@ class Building:
                                                    building.get("cost", 0.0),
                                                    building.get("appeal", 0.0)))
 
+            # initialize general houses
             Building.houses = []
             for i, house in enumerate(data["houses"]):
                 Building.houses.append(House(i,
@@ -98,6 +101,7 @@ class Building:
                                              house.get("cost", 0.0),
                                              house.get("appeal", 0.0)))
 
+            # initialize general businesses
             Building.businesses = []
             for i, business in enumerate(data["businesses"]):
                 Building.businesses.append(Business(i,
@@ -114,6 +118,7 @@ class Building:
                         building.name,
                         building.cost,
                         building.appeal)
+
 
 class House(Building):
     """
@@ -155,6 +160,7 @@ class House(Building):
         """
         for family in self._families:
             family.set_house(None)
+
 
 class Business(Building):
     """
@@ -198,23 +204,28 @@ class Business(Building):
 
     def try_acquire_job(self, adult: Adult) -> bool:
         """
-        tries to aquire an open job from the current business
+        tries to acquire an open job from the current business
         """
+        # looks if there are any open jobs
         if len(self._open_jobs) <= 0:
             return False
 
+        # gets open job
         job = next(iter(self._open_jobs))
         self._open_jobs[job] -= 1
         if self._open_jobs[job] <= 0:
             self._open_jobs.pop(job)
 
+        # assign the job to an adult
         self._employees.add(adult)
         adult.set_job(job, self)
 
+        # gets income from job
         if job.payed_by_village:
             self._running_costs += job.income
             self._total_income -= job.income
 
+        # gets taxes
         self._income += job.income * constants.INCOME_TAX_PORTION
         self._total_income += job.income * constants.INCOME_TAX_PORTION
 

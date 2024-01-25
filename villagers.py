@@ -13,6 +13,7 @@ from jobs import Job
 if TYPE_CHECKING:
     from buildings import Business
 
+
 class Villager:
     """
     Villager base class
@@ -37,7 +38,7 @@ class Villager:
         saves Villager to file
         """
         # name
-        file.write(struct.pack(">B", len(self._name )) + bytes(self._name, "utf-8"))
+        file.write(struct.pack(">B", len(self._name)) + bytes(self._name, "utf-8"))
 
         # age
         file.write(struct.pack(">H", self.age))
@@ -69,6 +70,7 @@ class Villager:
 
         return (name, age, happiness)
 
+
 class Child(Villager):
     """
     Child class
@@ -79,6 +81,7 @@ class Child(Villager):
         load Child from file
         """
         return cls(*Villager._load_data(file))
+
 
 class Adult(Villager):
     """
@@ -91,9 +94,11 @@ class Adult(Villager):
                  job: Job = None,
                  workplace: "Business" = None) -> None:
         super(Adult, self).__init__(name, age, happiness)
+
         self._job = job
         self._workplace = workplace
 
+        # checks if adult has job and sets the tax
         if self._job is None:
             self._income = 0.0
         else:
@@ -130,16 +135,17 @@ class Adult(Villager):
 
     def save(self, file: io.BufferedWriter) -> None:
         """
-        save Child to file
+        save Adult to file
         """
         super().save(file)
 
     @classmethod
     def load(cls, file: io.BufferedReader) -> "Adult":
         """
-        load Child from file
+        load Adult from file
         """
         return cls(*Villager._load_data(file), None)
+
 
 class Senior(Villager):
     """
@@ -148,6 +154,6 @@ class Senior(Villager):
     @classmethod
     def load(cls, file: io.BufferedReader) -> "Senior":
         """
-        load Child from file
+        load Senior from file
         """
         return cls(*Villager._load_data(file))

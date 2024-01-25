@@ -2,17 +2,100 @@
     "buildings": [
         {
             "name": "Statue",
-            "appeal": 10.0
+            "appeal": 10.0,
+            "cost": 1000.0
+        },
+        {
+            "name": "Playground",
+            "appeal": 20.0,
+            "cost": 5000
+        },
+        {
+            "name": "Park",
+            "appeal": 50.0,
+            "cost": 10000,
+            "running_cost": 100
+        },
+        {
+            "name": "Stadium",
+            "appeal": 75.0,
+            "cost": 100000,
+            "running_cost": 1000
         }
     ],
     "houses": [
         {
-            "name": "Generic House"
+            "name": "one Family Home",
+            "appeal": 20.0,
+            "cost": 2500,
+            "people": 5
+        },
+        {
+            "name": "Two Family Home",
+            "appeal": 10.0,
+            "cost": 4000,
+            "people": 10
+        },
+        {
+            "name": "Four Family Home",
+            "appeal": 5.0,
+            "cost": 15000,
+            "people": 20
+        },
+        {
+            "name": "Ten Family Home",
+            "appeal": 0.0,
+            "cost": 30000,
+            "people": 50
+        },
+        {
+            "name": "small Skycraper",
+            "appeal": -10.0,
+            "cost": 125000,
+            "people": 250
+        },
+        {
+            "name": "Medium Skycraper",
+            "appeal": -20.0,
+            "cost": 250000,
+            "people": 600
+        },
+        {
+            "name": "Big Skyscraper",
+            "appeal": 0.0,
+            "cost": 400000,
+            "people": 1000
         }
+
     ],
     "businesses": [
         {
-            "name": "Generic Business"
+            "name": "Small Business",
+            "appeal": -10,
+            "cost": 1000,
+            "running_cost": 100,
+            "income": 50
+        },
+        {
+            "name": "Medium Business",
+            "appeal": -20.0,
+            "cost": 5000,
+            "running_cost": 500,
+            "income": 300
+        },
+        {
+            "name": "Large Business",
+            "appeal": -30.0,
+            "cost": 20000,
+            "running_cost": 1000,
+            "income": 1500
+        },
+        {
+            "name": "Giant Business",
+            "appeal": -50.0,
+            "cost": 100000,
+            "running_cost": 2500,
+            "income": 10000
         }
     ]
 }

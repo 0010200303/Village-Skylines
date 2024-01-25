@@ -11,6 +11,7 @@ from village import Village
 import ui.frames
 from managers.states import State
 
+
 class UIManager(tk.Tk):
     """
     UI Manager
@@ -31,8 +32,7 @@ class UIManager(tk.Tk):
 
         self._current_state = State.ERROR
 
-
-
+        # initialize window
         self.title("Village Sklyines")
         self.geometry("800x600")
         self.protocol("WM_DELETE_WINDOW", self._main_manager.quit)
@@ -65,6 +65,7 @@ class UIManager(tk.Tk):
         if self._current_frame is not None:
             self._current_frame.disable()
 
+        # changes states
         match state:
             case State.MAIN_MENU:
                 self._current_frame = self._frames[ui.frames.MainMenuFrame]

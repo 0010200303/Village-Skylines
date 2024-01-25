@@ -8,6 +8,7 @@ import time
 
 from village import Village
 
+
 class GameManager(threading.Thread):
     """
     Game Manager

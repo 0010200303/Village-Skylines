@@ -3,6 +3,7 @@ Job related classes
 """
 __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
+
 class Job:
     """
     Job class
@@ -13,6 +14,7 @@ class Job:
                  hours: int = 8,
                  days: int = 20,
                  payed_by_village: bool = False) -> None:
+
         self._name = name
         self._salary = salary
         self._hours = hours

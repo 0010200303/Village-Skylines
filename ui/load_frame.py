@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from managers.main_manager import MainManager
     from village import Village
 
+
 class LoadFrame(FrameBase):
     """
     Menu for Loading Game
@@ -27,8 +28,8 @@ class LoadFrame(FrameBase):
 
         self.configure(padding=(10, 10))
 
+        # initialize variables
         tree_frame = ttk.Frame(self)
-
         columns = ("Name", "last played", "money", "population", "happiness", "appeal", "data")
         scrollbar = ttk.Scrollbar(tree_frame)
         self._treeview = ttk.Treeview(tree_frame,
@@ -37,11 +38,10 @@ class LoadFrame(FrameBase):
                                 show="headings",
                                 columns=columns)
         scrollbar.configure(command=self._treeview.yview)
-
         self._treeview.bind("<Double-1>", self._load_game)
 
         for i, text in enumerate(columns):
-            self._treeview.heading(i, text=text, command=lambda column=i: \
+            self._treeview.heading(i, text=text, command=lambda column=i:
                                    self._treeview_sort_column(self._treeview, column, False))
 
         scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
@@ -49,20 +49,21 @@ class LoadFrame(FrameBase):
 
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-
-
+        # back button
         back_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Back",
                               command=lambda: self._main_manager.change_state(State.MAIN_MENU))
         back_btn.pack(side=tk.LEFT, anchor=tk.SW, pady=(10, 0))
 
+        # delete button
         delete_btn = ttk.Button(self,
                                 style="MainMenu.TButton",
                                 text="Delete",
                                 command=self._delete_game)
         delete_btn.pack(side=tk.LEFT, anchor=tk.SW, padx=(10, 0), pady=(10, 0))
 
+        # load button
         load_btn = ttk.Button(self,
                               style="MainMenu.TButton",
                               text="Load",
@@ -77,6 +78,7 @@ class LoadFrame(FrameBase):
 
         self._treeview.delete(*self._treeview.get_children())
 
+        # saves
         for path in os.listdir("saves"):
             path = "saves/" + path
             if path[-4:] != ".vss":

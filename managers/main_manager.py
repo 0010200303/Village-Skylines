@@ -11,6 +11,7 @@ import managers.states
 
 from village import Village
 
+
 class MainManager:
     """
     Main Manager
@@ -48,10 +49,11 @@ class MainManager:
         """
         change state
         """
+        # changes current state
         self._current_state = state
-
         self._ui_manager.change_state(state)
 
+        # pause game
         if state == managers.states.State.INGAME:
             self._game_manager.pause()
             self.change_game_speed(1)
@@ -62,12 +64,15 @@ class MainManager:
         """
         if self._current_state == managers.states.State.INGAME:
             match key:
+                # save game
                 case "s":
                     self._game_manager.save()
 
+                # puts you in the pause menu
                 case "Escape":
                     self.change_state(managers.states.State.INGAME_MENU)
 
+                # speed manager
                 case "space":
                     self._game_manager.toggle()
                 case "1":

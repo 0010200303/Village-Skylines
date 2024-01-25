@@ -6,9 +6,11 @@ __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 import random
 import io
 import struct
+import copy
 
 import constants
-from villagers import Villager, Child, Adult, Senior
+from family import Family
+from villagers import Child, Adult, Senior
 from buildings import Building, House, Business
 from jobs import Job
 
@@ -21,7 +23,7 @@ class Village:
     def __init__(self,
                  name: str,
                  start_money: float,
-                 villagers: set[Villager],
+                 families: set[Family],
                  buildings: set[Building],
                  day: int = 1,
                  month: int = 1,
@@ -32,39 +34,41 @@ class Village:
         self._name = name
         self._money = start_money
 
-        self._children = {v for v in villagers if isinstance(v, Child)}
-        self._adults = {v for v in villagers if isinstance(v, Adult)}
-        self._seniors = {v for v in villagers if isinstance(v, Senior)}
+        self._families = families
 
-        self._children.update([v for v in villagers \
-                               if type(v) is Villager and v.age < constants.ADULT_AGE])
-        self._adults.update([v for v in villagers if \
-                             type(v) is Villager and v.age < constants.SENIOR_AGE])
-        self._seniors.update([v for v in villagers if \
-                              type(v) is Village and v.age >= constants.SENIOR_AGE])
-
-        self._houses = {b for b in buildings if isinstance(b, House)}
-        self._businesses = {b for b in buildings if isinstance(b, Business)}
+        self._buildings = {b.id: b for b in buildings if isinstance(b, House) is False \
+                           and isinstance(b, Business) is False}
+        self._houses = {b.id: b for b in buildings if isinstance(b, House)}
+        self._businesses = {b.id: b for b in buildings if isinstance(b, Business)}
 
         self._day = day
         self._month = month
         self._year = year
+
+        self._appeal = 0.0
+        for building in self._buildings.values():
+            self._appeal += building.appeal
+        for house in self._houses.values():
+            self._appeal += house.appeal
+        for business in self._businesses.values():
+            self._appeal += business.appeal
 
     @classmethod
     def create_village(cls, name: str, population_count: int = 10) -> "Village":
         """
         creates standard village
         """
-        villagers = {Adult(str(i), 21 * 365, 100.0, None) for i in range(population_count)}
+        families = {Family({Adult(f"Generic{str(j)}", 21 * 365, 100.0, None) for j in range(2)}) \
+                    for i in range(population_count // 2)}
 
-        jobs = {Job("9to5", 16, 8, 20): 2}
+        jobs = {Job("9to5", 16, 8, 20): 4}
 
         buildings = set()
-        buildings.update({House(str(i), (10, 10), (0, 0)) for i in range(population_count // 4)})
-        buildings.update({Business(str(i), (10, 10), (0, 0), dict(jobs)) \
+        buildings.update({House(i, str(i)) for i in range(population_count // 4)})
+        buildings.update({Business(i, str(i), jobs=dict(jobs)) \
                           for i in range(population_count // 100)})
 
-        return cls(name, 10_000, villagers, buildings, day=30)
+        return cls(name, 10_000, families, buildings, day=30)
 
     @property
     def name(self) -> str:
@@ -85,23 +89,45 @@ class Village:
         """
         population getter
         """
-        return len(self._children) + len(self._adults) + len(self._seniors)
+        return sum(len(family) for family in self._families)
 
     @property
-    def total_happiness(self) -> float:
+    def mean_happiness(self) -> float:
         """
         total happiness getter
         """
-        return (sum(child.happiness for child in self._children) + \
-                sum(adult.happiness for adult in self._adults) + \
-                sum(senior.happiness for senior in self._seniors)) / self.population
+        if len(self._families) <= 0:
+            return 0.0
+
+        return sum(family.mean_happiness for family in self._families) / len(self._families)
 
     @property
     def appeal(self) -> float:
         """
         appeal getter
         """
-        return 0.0
+        return self._appeal
+
+    @property
+    def buildings(self) -> set[Building]:
+        """
+        buildings getter
+        """
+        return self._buildings
+
+    @property
+    def houses(self) -> set[House]:
+        """
+        houses getter
+        """
+        return self._houses
+
+    @property
+    def businesses(self) -> set[Business]:
+        """
+        businesses
+        """
+        return self._businesses
 
     def get_date_str(self) -> str:
         """
@@ -129,21 +155,21 @@ class Village:
         file.write(struct.pack(">BBI", self._day, self._month, self._year))
 
         # preview stats
-        file.write(struct.pack(">ff", self.total_happiness, self.appeal))
+        file.write(struct.pack(">iff", self.population, self.mean_happiness, self.appeal))
 
-        # villagers
-        file.write(struct.pack(">i", len(self._children)))
-        file.write(struct.pack(">i", len(self._adults)))
-        file.write(struct.pack(">i", len(self._seniors)))
+        # families
+        # file.write(struct.pack(">i", len(self._children)))
+        # file.write(struct.pack(">i", len(self._adults)))
+        # file.write(struct.pack(">i", len(self._seniors)))
 
-        for child in self._children:
-            child.save(file)
+        # for child in self._children:
+        #     child.save(file)
 
-        for adult in self._adults:
-            adult.save(file)
+        # for adult in self._adults:
+        #     adult.save(file)
 
-        for senior in self._seniors:
-            senior.save(file)
+        # for senior in self._seniors:
+        #     senior.save(file)
 
         # TODO: save random state
 
@@ -198,62 +224,18 @@ class Village:
         """
         self._day += 1
 
-        children_to_remove = set()
-        children_to_add = set()
-        seniors_to_remove = set()
-        seniors_to_add = set()
-        adults_to_remove = set()
-        adults_to_add = set()
+        # update families
+        list(map(lambda family: family.tick(), self._families))
 
-        for child in self._children:
-            child.age += 1
-            child.happiness -= 0.05
+        # remove families
+        families_to_remove = {family for family in self._families \
+                              if family.mean_happiness <= constants.MIN_HAPPINESS}
+        self._families -= families_to_remove
 
-            # grow up
-            if child.age >= constants.ADULT_AGE:
-                children_to_remove.add(child)
-                adults_to_add.add(Adult(child.name, child.age, child.happiness, None))
-
-        for senior in self._seniors:
-            senior.age += 1
-            senior.happiness -= 0.05
-
-            # die
-            if random.randint(0, constants.MAX_AGE) >= 120 - senior.age:
-                seniors_to_remove.add(senior)
-                continue
-
-        for adult in self._adults:
-            adult.age += 1
-            adult.happiness -= 0.1
-
-            # leave
-            if adult.happiness <= constants.MIN_HAPPINESS:
-                adult.loose_job()
-
-                adults_to_remove.add(adult)
-                continue
-
-            # pension
-            if adult.age >= constants.SENIOR_AGE:
-                adult.loose_job()
-
-                adults_to_remove.add(adult)
-                seniors_to_add.add(Senior(adult.name, adult.age, adult.happiness))
-
-        for business in self._businesses:
+        # update businesses
+        for business in self._businesses.values():
             if random.random() > 0.99:
                 business.active = False
-
-        # update lists
-        self._children -= children_to_remove
-        self._children.update(children_to_add)
-
-        self._seniors -= seniors_to_remove
-        self._seniors.update(seniors_to_add)
-
-        self._adults -= adults_to_remove
-        self._adults.update(adults_to_add)
 
     def _tick_month(self) -> None:
         """
@@ -261,16 +243,55 @@ class Village:
         """
         self._month += 1
 
-        self._money += sum(adult.income_from_tax for adult in self._adults) \
-                        * constants.INCOME_TAX_PORTION
+        self._money += sum(house.income for house in self._houses.values())
+        self._money += sum(business.total_income for business in self._businesses.values() \
+                           if business.active)
 
-        self._money += sum(house.income for house in self._houses)
-        self._money += sum(business.income for business in self._businesses if business.active)
+        # adults find job
+        for family in self._families:
+            for adult in family.unemployed_adults:
+                for business in self._businesses.values():
+                    if business.try_acquire_job(adult) is True:
+                        break
 
-        for adult in self._adults:
-            if adult.job is not None:
-                continue
+    def destroy_building(self, building_type: str, building_id: int) -> None:
+        """
+        destroy building
+        """
+        match building_type:
+            case "<class \'buildings.Building\'>":
+                l = self._buildings
+            case "<class \'buildings.House\'>":
+                l = self._houses
+            case "<class \'buildings.Business\'>":
+                l = self._businesses
+        building = l.pop(building_id)
+        if isinstance(building, Business):
+            building.destroy()
 
-            for business in self._businesses:
-                if business.try_acquire_job(adult) is True:
-                    break
+        self._appeal -= building.appeal
+
+    def buy_building(self, building: Building) -> Building:
+        """
+        buy building
+        """
+        if self._money < building.cost:
+            return None
+
+        self._money -= building.cost
+
+        new_building = copy.copy(building)
+
+        if isinstance(new_building, House):
+            new_building.id = len(self._houses)
+            self._houses[new_building.id] = new_building
+        elif isinstance(new_building,  Business):
+            new_building.id = len(self._businesses)
+            self._businesses[new_building.id] = new_building
+        else:
+            new_building.id = len(self._buildings)
+            self._buildings[new_building.id] = new_building
+
+        self._appeal += new_building.appeal
+
+        return new_building

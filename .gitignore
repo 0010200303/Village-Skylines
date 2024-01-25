@@ -1,3 +1,4 @@
 *.pyc
 *.vss
 .VSCodeCounter/
+tust.py

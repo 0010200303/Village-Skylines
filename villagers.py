@@ -73,18 +73,6 @@ class Child(Villager):
     """
     Child class
     """
-    def __init__(self,
-                 name: str,
-                 age: int,
-                 happiness: float):
-        super(Child, self).__init__(name, age, happiness)
-
-    def save(self, file: io.BufferedWriter) -> None:
-        """
-        save Child to file
-        """
-        super().save(file)
-
     @classmethod
     def load(cls, file: io.BufferedReader) -> "Child":
         """
@@ -118,27 +106,21 @@ class Adult(Villager):
         """
         return self._job
 
-    def set_job(self, job: Job, workplace: "Business" = None) -> None:
+    def set_job(self, job: Job, workplace: "Business" = None, destroyed_workplace: bool = False) -> None:
         """
         job setter
         """
-        self._job = job
         if job is None:
             self._income = 0.0
-            self._workplace = None
-            return
 
-        self._income = job.income
+            if destroyed_workplace is False:
+                self._workplace.loose_job(self)
+        else:
+            self._income = job.income
+
+        self._job = job
         self._workplace = workplace
 
-    def loose_job(self) -> None:
-        """
-        loose job
-        """
-        if self._workplace is not None:
-            self._workplace.loose_job(self)
-
-    # TODO: implement full income tax
     @property
     def income_from_tax(self) -> float:
         """
@@ -163,18 +145,6 @@ class Senior(Villager):
     """
     Senior class
     """
-    def __init__(self,
-                 name: str,
-                 age: int,
-                 happiness: float) -> None:
-        super(Senior, self).__init__(name, age, happiness)
-
-    def save(self, file: io.BufferedWriter) -> None:
-        """
-        save Child to file
-        """
-        super().save(file)
-
     @classmethod
     def load(cls, file: io.BufferedReader) -> "Senior":
         """

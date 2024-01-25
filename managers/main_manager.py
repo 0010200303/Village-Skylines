@@ -80,6 +80,8 @@ class MainManager:
                     self.change_game_speed(10)
                 case "5":
                     self.change_game_speed(20)
+                case "0":
+                    self.change_game_speed(10000000)
 
     def save_game(self) -> None:
         """

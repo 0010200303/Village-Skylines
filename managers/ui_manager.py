@@ -47,7 +47,7 @@ class UIManager(tk.Tk):
 
         self._frames = {}
         for t in ui.frames.ALL_FRAMES:
-            frame = t(self._container, self._main_manager)
+            frame = t(self._container, self._main_manager, village)
 
             self._frames[t] = frame
 
@@ -115,7 +115,7 @@ class UIManager(tk.Tk):
         tick
         """
         if self._current_state == State.INGAME:
-            self._current_frame.update_data(self._village)
+            self._current_frame.update_data()
 
     def _call_on_key_pressed(self, event: tk.Event) -> None:
         """

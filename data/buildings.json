@@ -1,0 +1,18 @@
+{
+    "buildings": [
+        {
+            "name": "Statue",
+            "appeal": 10.0
+        }
+    ],
+    "houses": [
+        {
+            "name": "Generic House"
+        }
+    ],
+    "businesses": [
+        {
+            "name": "Generic Business"
+        }
+    ]
+}

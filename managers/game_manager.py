@@ -77,4 +77,4 @@ class GameManager(threading.Thread):
         """
         with open(f"saves/{self._village.name}.vss", "wb") as file:
             self._village.save(file)
-        print("saved game!")
+        print(f"saved game to saves/{self._village.name}.vss!")

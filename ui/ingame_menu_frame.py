@@ -13,13 +13,14 @@ from managers.states import State
 # includes only needed for typing
 if TYPE_CHECKING:
     from managers.main_manager import MainManager
+    from village import Village
 
 class IngameMenuFrame(FrameBase):
     """
     Ingame Menu
     """
-    def __init__(self, parent, main_manager: "MainManager"):
-        FrameBase.__init__(self, parent, main_manager)
+    def __init__(self, parent, main_manager: "MainManager", village: "Village"):
+        FrameBase.__init__(self, parent, main_manager, village)
 
         self.configure(style="MainFrame.TFrame")
 

@@ -71,6 +71,8 @@ class Family:
 
             if self._house is None:
                 child.happiness -= 0.05
+            else:
+                child.happiness += 0.03
 
             # lets children grow up
             if child.age >= constants.ADULT_AGE:
@@ -83,6 +85,8 @@ class Family:
 
             if self._house is None:
                 senior.happiness -= 0.05
+            else:
+                senior.happiness += 0.02
 
             # lets seniors die
             if random.randint(0, constants.MAX_AGE) >= 120 - senior.age:
@@ -96,11 +100,11 @@ class Family:
 
             if self._house is None:
                 adult.happiness -= 0.05
+            else:
+                adult.happiness += 0.035
 
             if adult.job_id is None:
                 adult.happiness -= 0.03
-            else:
-                adult.happiness += 0.02
 
             adult.happiness -= 0.1
 

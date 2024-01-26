@@ -34,6 +34,8 @@ class Family:
         self._mean_happiness = (sum(child.happiness for child in self._children) +
                                 sum(adult.happiness for adult in self._adults) +
                                 sum(senior.happiness for senior in self._seniors)) / len(self)
+        
+        self._house = None
 
     def __len__(self) -> int:
         return self._len
@@ -73,7 +75,7 @@ class Family:
                 children_to_remove.add(child)
                 adults_to_add.add(Adult(child.name, child.age, child.happiness, None))
 
-        # # updates attributes for the seniors
+        # updates attributes for the seniors
         for senior in self._seniors:
             senior.age += 1
             senior.happiness -= 0.05
@@ -106,6 +108,9 @@ class Family:
         self._adults -= adults_to_remove
         self._adults.update(adults_to_add)
 
+        if len(self) <= 0:
+            return
+
         # calculates the mean happiness
         self._mean_happiness = ((sum(map(lambda child: child.happiness, self._children)) +
                                 sum(map(lambda adult: adult.happiness, self._adults)) +
@@ -117,3 +122,8 @@ class Family:
         """
         set house and if null homeless
         """
+        if self._house is not None:
+            self._house.move_out(self)
+        if house is not None:
+            house.move_in(self)
+        self._house = house

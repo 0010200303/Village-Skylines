@@ -18,6 +18,9 @@ class Villager:
     """
     Villager base class
     """
+    FIRST_NAMES = ["Huren", "Votzen"]
+    LAST_NAMES = ["Sohn", "Tochter"]
+
     def __init__(self,
                  name: str,
                  age: int,
@@ -111,27 +114,30 @@ class Adult(Villager):
         """
         return self._job
 
-    def set_job(self, job: Job, workplace: "Business" = None, destroyed_workplace: bool = False) -> None:
-        """
-        job setter
-        """
-        if job is None:
-            self._income = 0.0
-
-            if destroyed_workplace is False:
-                self._workplace.loose_job(self)
-        else:
-            self._income = job.income
-
-        self._job = job
-        self._workplace = workplace
-
     @property
     def income_from_tax(self) -> float:
         """
         get income from job
         """
         return self._income
+    
+    def set_job(self,
+                job: Job,
+                workplace: "Business" = None,
+                destroyed_workplace: bool = False) -> None:
+        """
+        job setter
+        """
+        if job is None:
+            self._income = 0.0
+
+            if destroyed_workplace is False and self._workplace is not None:
+                self._workplace.loose_job(self)
+        else:
+            self._income = job.income
+
+        self._job = job
+        self._workplace = workplace
 
     def save(self, file: io.BufferedWriter) -> None:
         """

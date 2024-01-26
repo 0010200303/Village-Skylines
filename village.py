@@ -10,7 +10,7 @@ import copy
 
 import constants
 from family import Family
-from villagers import Child, Adult, Senior
+from villagers import Villager, Child, Adult, Senior
 from buildings import Building, House, Business
 from jobs import Job
 
@@ -68,7 +68,7 @@ class Village:
 
         # update buildings
         buildings = set()
-        buildings.update({House(i, str(i)) for i in range(population_count // 4)})
+        buildings.update({House(i, str(i), capacity=8) for i in range(population_count // 4)})
         buildings.update({Business(i, str(i), jobs=dict(jobs))
                           for i in range(population_count // 100)})
 
@@ -239,14 +239,60 @@ class Village:
         list(map(lambda family: family.tick(), self._families))
 
         # remove families
-        families_to_remove = {family for family in self._families
-                              if family.mean_happiness <= constants.MIN_HAPPINESS}
+        families_to_remove = {family for family in self._families \
+                              if family.mean_happiness <= constants.MIN_HAPPINESS \
+                              or len(family) <= 0}
         self._families -= families_to_remove
 
         # update businesses
         for business in self._businesses.values():
             if random.random() > 0.99:
                 business.active = False
+
+        # gain new families
+        if self.population <= 0:
+            return
+
+        person_count = (self.appeal / self.population) * self.mean_happiness
+
+        while True:
+            child_count = int(random.triangular(0, 5, 2))
+            adult_count = int(random.triangular(1, 5, 1.8))
+            senior_count = int(random.triangular(0, 3, 1.3))
+            total = child_count + adult_count + senior_count
+
+            if total > person_count:
+                break
+
+            # check if any house has enough capacity for family
+            house = None
+            for h in self._houses.values():
+                if h.free_capacity >= total:
+                    house = h
+                    break
+            if house is None:
+                break
+
+            person_count -= total
+
+            villagers = set()
+            villagers.update({Child(f"{random.choice(Villager.FIRST_NAMES)} \
+                                    {random.choice(Villager.LAST_NAMES)}", \
+                                    random.triangular(0, 17 * 365, 10 * 365), \
+                                    random.triangular(0, 100, 80)) for i in range(child_count)})
+            villagers.update({Adult(f"{random.choice(Villager.FIRST_NAMES)} \
+                                    {random.choice(Villager.LAST_NAMES)}", \
+                                    random.triangular(18 * 365, 75 * 365, 32 * 365), \
+                                    random.triangular(0, 100, 80)) for i in range(adult_count)})
+            villagers.update({Senior(f"{random.choice(Villager.FIRST_NAMES)} \
+                                     {random.choice(Villager.LAST_NAMES)}", \
+                                    random.triangular(80 * 365, 119 * 365, 100 * 365), \
+                                    random.triangular(0, 100, 80)) for i in range(senior_count)})
+
+            family = Family(villagers)
+            house.move_in(family)
+
+            self._families.add(family)
 
     def _tick_month(self) -> None:
         """
@@ -255,7 +301,8 @@ class Village:
         self._month += 1
 
         # updates money
-        self._money += sum(house.income for house in self._houses.values())
+        self._money -= sum(building.running_costs for building in self._buildings.values())
+        self._money -= sum(house.running_costs for house in self._houses.values())
         self._money += sum(business.total_income for business in self._businesses.values()
                            if business.active)
 

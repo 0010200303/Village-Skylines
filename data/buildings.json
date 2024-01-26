@@ -28,43 +28,43 @@
             "name": "one Family Home",
             "appeal": 20.0,
             "cost": 2500,
-            "people": 5
+            "capacity": 5
         },
         {
             "name": "Two Family Home",
             "appeal": 10.0,
             "cost": 4000,
-            "people": 10
+            "capacity": 10
         },
         {
             "name": "Four Family Home",
             "appeal": 5.0,
             "cost": 15000,
-            "people": 20
+            "capacity": 20
         },
         {
             "name": "Ten Family Home",
             "appeal": 0.0,
             "cost": 30000,
-            "people": 50
+            "capacity": 50
         },
         {
             "name": "small Skycraper",
             "appeal": -10.0,
             "cost": 125000,
-            "people": 250
+            "capacity": 250
         },
         {
             "name": "Medium Skycraper",
             "appeal": -20.0,
             "cost": 250000,
-            "people": 600
+            "capacity": 600
         },
         {
             "name": "Big Skyscraper",
             "appeal": 0.0,
             "cost": 400000,
-            "people": 1000
+            "capacity": 1000
         }
 
     ],

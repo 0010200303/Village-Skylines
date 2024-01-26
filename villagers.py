@@ -120,7 +120,7 @@ class Adult(Villager):
         get income from job
         """
         return self._income
-    
+
     def set_job(self,
                 job: Job,
                 workplace: "Business" = None,

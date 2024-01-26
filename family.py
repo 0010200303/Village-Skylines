@@ -117,7 +117,6 @@ class Family:
                                 sum(map(lambda senior: senior.happiness, self._seniors)))
                                 / len(self))
 
-    # TODO: implement
     def set_house(self, house) -> None:
         """
         set house and if null homeless
@@ -127,3 +126,12 @@ class Family:
         if house is not None:
             house.move_in(self)
         self._house = house
+
+    def leave(self) -> None:
+        """
+        leave city
+        """
+        self.set_house(None)
+
+        for adult in self._adults:
+            adult.set_job(None)

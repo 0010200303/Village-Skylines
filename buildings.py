@@ -89,6 +89,9 @@ class Building:
         """
         load all buildings from file
         """
+        if Building._initialized is True:
+            return
+
         Building._initialized = True
         with open("data/buildings.json", encoding="utf-8") as file:
             data = json.load(file)
@@ -113,14 +116,24 @@ class Building:
                                              capacity=house.get("capacity", 0)))
 
             # initialize general businesses
+            Job.load_jobs()
+
             Building.businesses = []
             for i, business in enumerate(data["businesses"]):
+                jobs = None
+                _jobs = business.get("jobs", None)
+                if _jobs is not None:
+                    jobs = {}
+                    for key, value in _jobs.items():
+                        jobs[Job.jobs[key]] = value
+
                 Building.businesses.append(Business(_id=i,
                                                     name=business.get("name", "unknown business"),
                                                     cost=business.get("cost", 0.0),
                                                     running_costs=business.get("running_costs", 0.0),
                                                     appeal=business.get("appeal", 0.0),
-                                                    income=business.get("income", 0.0)))
+                                                    income=business.get("income", 0.0),
+                                                    jobs=jobs))
 
     @staticmethod
     def copy(building: "Building", _id: int) -> "Building":

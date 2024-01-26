@@ -64,7 +64,7 @@ class Village:
                     for i in range(population_count // 2)}
 
         # initialise job
-        jobs = {Job("9to5", 16, 8, 20): 4}
+        jobs = {Job("9to5", 2560): 4}
 
         # update buildings
         buildings = set()
@@ -243,6 +243,8 @@ class Village:
                               if family.mean_happiness <= constants.MIN_HAPPINESS \
                               or len(family) <= 0}
         self._families -= families_to_remove
+        for family in families_to_remove:
+            family.leave()
 
         # update businesses
         for business in self._businesses.values():
@@ -303,8 +305,7 @@ class Village:
         # updates money
         self._money -= sum(building.running_costs for building in self._buildings.values())
         self._money -= sum(house.running_costs for house in self._houses.values())
-        self._money += sum(business.total_income for business in self._businesses.values()
-                           if business.active)
+        self._money += sum(business.total_income for business in self._businesses.values())
 
         # adults find job
         for family in self._families:

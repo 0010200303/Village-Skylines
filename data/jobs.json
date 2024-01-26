@@ -1,0 +1,11 @@
+[
+    {
+        "name": "minimum wage",
+        "income": 2200
+    },
+    {
+        "name": "minimum wage city worker",
+        "income": 2200,
+        "payed_by_village": true
+    }
+]

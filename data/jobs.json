@@ -4,8 +4,73 @@
         "income": 2200
     },
     {
+        "name": "Baker",
+        "income": 2500
+    },
+    {
+        "name": "Carpenter",
+        "income": 3750
+    },
+    {
+        "name": "Lawyer",
+        "income": 10000
+    },
+    {
+        "name": "Nurse ",
+        "income": 6000
+    },
+    {
+        "name": "Journalist",
+        "income": 3750
+    },
+    {
+        "name": "Dentist",
+        "income": 12500
+    },
+    {
+        "name": "Engineer",
+        "income": 6600
+    },
+    {
+        "name": "Electrical",
+        "income": 3700
+    },
+    {
+        "name": "Plumber",
+        "income": 4500
+    },
+    {
+        "name": "Hairdresser",
+        "income": 2500
+    },
+    {
         "name": "minimum wage city worker",
         "income": 2200,
+        "payed_by_village": true
+    },
+    {
+        "name": "Teacher",
+        "income": 4500,
+        "payed_by_village": true
+    },
+    {
+        "name": "Caretaker",
+        "income": 2500,
+        "payed_by_village": true
+    },
+    {
+        "name": "Police",
+        "income": 3700,
+        "payed_by_village": true
+    },
+    {
+        "name": "Firefighter",
+        "income": 3200,
+        "payed_by_village": true
+    },
+    {
+        "name": "Cleaner",
+        "income": 1250,
         "payed_by_village": true
     }
 ]

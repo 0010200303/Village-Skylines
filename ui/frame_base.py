@@ -27,8 +27,14 @@ class FrameBase(ttk.Frame):
         # sets styles
         if self.style is None:
             self.style = ttk.Style()
-            self.style.configure("MainFrame.TFrame",
+            self.style.configure("DefaultFrame.TFrame",
                                  background="pink")
+            self.style.configure("DefaultTitle.TLabel",
+                                 background="pink",
+                                 font=("Comic Sans ms", 12))
+            self.style.configure("DefaultLabel.TLabel",
+                                 background="pink",
+                                 font=("Comic Sans ms", 8))
             self.style.configure("Title.TLabel",
                                  foreground="Purple",
                                  background="pink",

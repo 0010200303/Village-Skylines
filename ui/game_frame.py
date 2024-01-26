@@ -82,29 +82,34 @@ class GameFrame(FrameBase):
         horizontal_paned_window.pack(fill=tk.BOTH, expand=True)
         vertical_paned_window.add(horizontal_paned_window)
 
-        # info frame
-        info_frame = ttk.Frame(vertical_paned_window, style="MainFrame.TFrame")
+        # region building info frame
+        info_frame = ttk.Frame(vertical_paned_window, style="DefaultFrame.TFrame")
         info_frame.pack(fill=tk.BOTH, expand=True)
 
-        # building info
-        self._building_info = ttk.Label(info_frame)
-        self._building_info.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10)
+        building_info_lbl = ttk.Label(info_frame,
+                                      style="DefaultTitle.TLabel",
+                                      text="Building Info")
+        building_info_lbl.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10)
 
-        # destroy button
+        self._building_info = ttk.Label(info_frame, style="DefaultLabel.TLabel")
+        self._building_info.pack(side=tk.TOP, anchor=tk.NW, padx=10)
+
         self._destroy_btn = ttk.Button(info_frame, text="Destroy", state=tk.DISABLED)
         self._destroy_btn.pack(side=tk.BOTTOM, anchor=tk.SE, padx=10, pady=10)
 
         vertical_paned_window.add(info_frame)
+        # endregion
 
-        # buildings frame
-        buildings_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
+        # region buildings frame
+        buildings_frame = ttk.Frame(horizontal_paned_window, style="DefaultFrame.TFrame")
         buildings_frame.pack(fill=tk.BOTH, expand=True)
 
-        # building label
-        buildings_lbl = ttk.Label(buildings_frame, text="Village Buldings")
+        buildings_lbl = ttk.Label(buildings_frame,
+                                  style="DefaultTitle.TLabel",
+                                  text="Village Buldings")
         buildings_lbl.pack(side=tk.TOP)
 
-        columns = ("type", "name")
+        columns = ("name",)
         buildings_scrollbar = ttk.Scrollbar(buildings_frame)
         self._buildings_list = ttk.Treeview(buildings_frame,
                                             yscrollcommand=buildings_scrollbar.set,
@@ -120,32 +125,33 @@ class GameFrame(FrameBase):
                                     self._treeview_sort_column(self._buildings_list, column, False))
 
         for building in self._village._buildings.values():
-            values = ("building", building.name)
+            values = (building.name,)
             self._buildings_list.insert("", tk.END, tags=(Building, building.id), values=values)
 
         for house in self._village.houses.values():
-            values = ("house", house.name)
+            values = (house.name,)
             self._buildings_list.insert("", tk.END, tags=(House, house.id), values=values)
 
         for business in self._village.businesses.values():
-            values = ("business", business.name)
+            values = (business.name,)
             self._buildings_list.insert("", tk.END, tags=(Business, business.id), values=values)
 
         buildings_scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
         self._buildings_list.pack(fill=tk.BOTH, expand=True)
 
         horizontal_paned_window.add(buildings_frame, weight=30)
+        # endregion
 
-        # shop frame
-        shop_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
+        # region shop frame
+        shop_frame = ttk.Frame(horizontal_paned_window, style="DefaultFrame.TFrame")
         shop_frame.pack(fill=tk.BOTH, expand=True)
 
-        # shop label
-        shop_lbl = ttk.Label(shop_frame, text="Shop")
+        shop_lbl = ttk.Label(shop_frame,
+                             style="DefaultTitle.TLabel",
+                             text="Shop")
         shop_lbl.pack(side=tk.TOP)
 
-        # shop scrollbar
-        columns = ("type", "name")
+        columns = ("name",)
         shop_scrollbar = ttk.Scrollbar(shop_frame)
         self._shop_list = ttk.Treeview(shop_frame,
                                        yscrollcommand=shop_scrollbar.set,
@@ -161,38 +167,40 @@ class GameFrame(FrameBase):
                               self._treeview_sort_column(self._shop_list, column, False))
 
         for building in Building.buildings:
-            values = ("building", building.name)
+            values = (building.name,)
             self._shop_list.insert("", tk.END, tags=(Building, building.id), values=values)
 
         for house in Building.houses:
-            values = ("house", house.name)
+            values = (house.name,)
             self._shop_list.insert("", tk.END, tags=(House, house.id), values=values)
 
         for business in Building.businesses:
-            values = ("business", business.name)
+            values = (business.name,)
             self._shop_list.insert("", tk.END, tags=(Business, business.id), values=values)
 
         shop_scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
         self._shop_list.pack(fill=tk.BOTH, expand=True)
 
         horizontal_paned_window.add(shop_frame, weight=30)
+        # endregion
 
-        # shop info frame
-        shop_info_frame = ttk.Frame(horizontal_paned_window, style="MainFrame.TFrame")
+        # region shop info frame
+        shop_info_frame = ttk.Frame(horizontal_paned_window, style="DefaultFrame.TFrame")
         shop_info_frame.pack(fill=tk.BOTH, expand=True)
 
-        # shop info label
-        shop_info_title_lbl = ttk.Label(shop_info_frame, text="Shop Info")
+        shop_info_title_lbl = ttk.Label(shop_info_frame,
+                                        style="DefaultTitle.TLabel",
+                                        text="Shop Info")
         shop_info_title_lbl.pack(side=tk.TOP)
 
-        self._shop_info_lbl = ttk.Label(shop_info_frame)
+        self._shop_info_lbl = ttk.Label(shop_info_frame, style="DefaultLabel.TLabel")
         self._shop_info_lbl.pack(side=tk. TOP, anchor=tk.NW, padx=4, pady=4)
 
-        # buy button
         self._buy_btn = ttk.Button(shop_info_frame, text="Buy", state=tk.DISABLED)
         self._buy_btn.pack(side=tk.BOTTOM, anchor=tk.SE, padx=10, pady=10)
 
         horizontal_paned_window.add(shop_info_frame, weight=1)
+        # endregion
 
     def update_data(self) -> None:
         """
@@ -205,6 +213,9 @@ class GameFrame(FrameBase):
         self._population_lbl.configure(text=str(self._village.population))
         self._happiness_lbl.configure(text=format(self._village.mean_happiness, '.2f'))
         self._appeal_lbl.configure(text=format(self._village.appeal, '.2f'))
+
+        self._display_building(None)
+        self._display_shop(None)
 
     def set_speed(self, speed: int) -> None:
         """
@@ -229,19 +240,40 @@ class GameFrame(FrameBase):
         # checks kind of building
         match building_type:
             case "<class \'buildings.Building\'>":
-                building = self._village.buildings[building_id]
-
-                text = f"Name: {building.name}"
+                self._display_building_building(self._village.buildings[building_id])
             case "<class \'buildings.House\'>":
-                house = self._village.houses[building_id]
-
-                text = f"Name: {house.name}"
+                self._display_building_house(self._village.houses[building_id])
             case "<class \'buildings.Business\'>":
-                business = self._village.businesses[building_id]
+                self._display_building_business(self._village.businesses[building_id])
 
-                text = f"Name: {business.name}"
+    def _display_building_building(self, building: Building) -> None:
+        """
+        display building type from village
+        """
+        self._building_info.configure(text=f"""Name: {building.name}
+Running Costs: {building.running_costs}
+Appeal: {building.appeal}""")
 
-        self._building_info.configure(text=text)
+    def _display_building_house(self, house: House) -> None:
+        """
+        display house type from village
+        """
+        self._building_info.configure(text=f"""Name: {house.name}
+Running Costs: {house.running_costs}
+Appeal: {house.appeal}
+Capacity: {house.capacity}
+""")
+
+    def _display_building_business(self, business: Business) -> None:
+        """
+        display business type from village
+        """
+        self._building_info.configure(text=f"""Name: {business.name}
+Running Costs: {business.running_costs}
+Appeal: {business.appeal}
+Open Jobs: {sum(business.open_jobs.values())}
+Employees: {len(business.employees)}
+""")
 
     def _destroy_building(self, selection) -> None:
         """
@@ -279,22 +311,44 @@ class GameFrame(FrameBase):
         self._buy_btn.configure(state=tk.NORMAL, command=lambda:
                                 self._buy_building(self._shop_list.selection()[0]))
 
-        # checks building
+        # checks type of building
         match building_type:
             case "<class \'buildings.Building\'>":
-                building = Building.buildings[building_id]
-
-                text = f"Name: {building.name}"
+                self._display_shop_building(Building.buildings[building_id])
             case "<class \'buildings.House\'>":
-                house = Building.houses[building_id]
-
-                text = f"Name: {house.name}"
+                self._display_shop_house(Building.houses[building_id])
             case "<class \'buildings.Business\'>":
-                business = Building.businesses[building_id]
+                self._display_shop_business(Building.businesses[building_id])
 
-                text = f"Name: {business.name}"
+    def _display_shop_building(self, building: Building) -> None:
+        """
+        display building type from shop
+        """
+        self._shop_info_lbl.configure(text=f"""Name: {building.name}
+Cost: {building.cost}
+Running Costs: {building.running_costs}
+Appeal: {building.appeal}""")
 
-        self._shop_info_lbl.configure(text=text)
+    def _display_shop_house(self, house: House) -> None:
+        """
+        display house type from shop
+        """
+        self._shop_info_lbl.configure(text=f"""Name: {house.name}
+Cost: {house.cost}
+Running Costs: {house.running_costs}
+Appeal: {house.appeal}
+Capacity: {house.capacity}""")
+
+    def _display_shop_business(self, business: Business) -> None:
+        """
+        display business type from shop
+        """
+        self._shop_info_lbl.configure(text=f"""Name: {business.name}
+Cost: {business.cost}
+Running Costs: {business.running_costs}
+Appeal: {business.appeal}
+Income: {business.income}
+Jobs: {sum(business.open_jobs.values())}""")
 
     def _buy_building(self, selection) -> None:
         """

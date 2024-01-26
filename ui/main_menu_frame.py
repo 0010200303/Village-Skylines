@@ -23,7 +23,7 @@ class MainMenuFrame(FrameBase):
     def __init__(self, parent, main_manager: "MainManager", village: "Village"):
         FrameBase.__init__(self, parent, main_manager, village)
 
-        self.configure(style="MainFrame.TFrame")
+        self.configure(style="DefaultFrame.TFrame")
 
         # title label
         title_lbl = ttk.Label(self, style="Title.TLabel", text="Village Skylines")

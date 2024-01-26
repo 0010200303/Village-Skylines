@@ -234,6 +234,13 @@ class Business(Building):
                         jobs=self._open_jobs)
 
     @property
+    def income(self) -> float:
+        """
+        income getter
+        """
+        return self._income
+
+    @property
     def total_income(self) -> float:
         """
         income getter
@@ -243,9 +250,16 @@ class Business(Building):
     @property
     def open_jobs(self) -> {Job: int}:
         """
-        jobs getter
+        open jobs getter
         """
         return self._open_jobs
+
+    @property
+    def employees(self) -> set[Adult]:
+        """
+        employees getter
+        """
+        return self._employees
 
     def try_acquire_job(self, adult: Adult) -> bool:
         """

@@ -22,7 +22,7 @@ class IngameMenuFrame(FrameBase):
     def __init__(self, parent, main_manager: "MainManager", village: "Village"):
         FrameBase.__init__(self, parent, main_manager, village)
 
-        self.configure(style="MainFrame.TFrame")
+        self.configure(style="DefaultFrame.TFrame")
 
         # title lable
         title_lbl = ttk.Label(self, style="Title.TLabel", text="Pause")

@@ -270,6 +270,8 @@ Capacity: {house.capacity}
         """
         self._building_info.configure(text=f"""Name: {business.name}
 Running Costs: {business.running_costs}
+Income: {business.income}
+Total Income: {business.total_income}
 Appeal: {business.appeal}
 Open Jobs: {sum(business.open_jobs.values())}
 Employees: {len(business.employees)}

@@ -276,11 +276,9 @@ class Business(Building):
         # gets income from job
         job = Job.jobs[job_id]
         if job.payed_by_village:
-            self._running_costs += job.income
             self._total_income -= job.income
 
         # gets taxes
-        self._income += job.income * constants.INCOME_TAX_PORTION
         self._total_income += job.income * constants.INCOME_TAX_PORTION
 
     def try_acquire_job(self, adult: Adult) -> bool:
@@ -310,10 +308,8 @@ class Business(Building):
 
         job = Job.jobs[adult.job_id]
         if job.payed_by_village:
-            self._running_costs -= job.income
             self._total_income += job.income
 
-        self._income -= job.income * constants.INCOME_TAX_PORTION
         self._total_income -= job.income * constants.INCOME_TAX_PORTION
 
     def destroy(self) -> None:

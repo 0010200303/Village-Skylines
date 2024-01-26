@@ -256,7 +256,6 @@ class Village:
             return
 
         person_count = (self.appeal / self.population) * self.mean_happiness
-
         while True:
             child_count = int(random.triangular(0, 5, 2))
             adult_count = int(random.triangular(1, 5, 1.8))
@@ -278,16 +277,16 @@ class Village:
             person_count -= total
 
             villagers = set()
-            villagers.update({Child(f"{random.choice(Villager.FIRST_NAMES)} \
-                                    {random.choice(Villager.LAST_NAMES)}", \
+            villagers.update({Child(f"{random.choice(Villager.first_names)} \
+                                    {random.choice(Villager.last_names)}", \
                                     random.triangular(0, 17 * 365, 10 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(child_count)})
-            villagers.update({Adult(f"{random.choice(Villager.FIRST_NAMES)} \
-                                    {random.choice(Villager.LAST_NAMES)}", \
+            villagers.update({Adult(f"{random.choice(Villager.first_names)} \
+                                    {random.choice(Villager.last_names)}", \
                                     random.triangular(18 * 365, 75 * 365, 32 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(adult_count)})
-            villagers.update({Senior(f"{random.choice(Villager.FIRST_NAMES)} \
-                                     {random.choice(Villager.LAST_NAMES)}", \
+            villagers.update({Senior(f"{random.choice(Villager.first_names)} \
+                                     {random.choice(Villager.last_names)}", \
                                     random.triangular(80 * 365, 119 * 365, 100 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(senior_count)})
 
@@ -356,7 +355,6 @@ class Village:
             new_building.id = len(self._buildings)
             self._buildings[new_building.id] = new_building
 
-        # adds building
         self._appeal += new_building.appeal
 
         return new_building

@@ -22,8 +22,7 @@ class Job:
         self._income = income
         self._payed_by_village = payed_by_village
 
-        if Job._initialized is False:
-            Job.load_jobs()
+        Job.load_jobs()
 
     @property
     def income(self) -> int:

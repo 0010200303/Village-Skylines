@@ -18,8 +18,9 @@ class Villager:
     """
     Villager base class
     """
-    FIRST_NAMES = ["Huren", "Votzen"]
-    LAST_NAMES = ["Sohn", "Tochter"]
+    _initialized = False
+    first_names = ["Firstname"]
+    last_names = ["Lastname"]
 
     def __init__(self,
                  name: str,
@@ -28,6 +29,8 @@ class Villager:
         self._name = name
         self.age = age
         self.happiness = happines
+
+        Villager.load_names()
 
     @property
     def name(self) -> str:
@@ -73,6 +76,19 @@ class Villager:
 
         return (name, age, happiness)
 
+    @staticmethod
+    def load_names() -> None:
+        """
+        load names
+        """
+        if Villager._initialized is True:
+            return
+        Villager._initialized = True
+
+        with open("data/first_names.txt", encoding="utf-8") as file:
+            Villager.first_names = file.read().splitlines()
+        with open("data/last_names.txt", encoding="utf-8") as file:
+            Villager.last_names = file.read().splitlines()
 
 class Child(Villager):
     """

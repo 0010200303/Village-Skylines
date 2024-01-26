@@ -33,14 +33,14 @@ class Building:
 
         self._id = _id
 
-        if self._initialized is False:
-            Building.load_buildings()
+        Building.load_buildings()
 
     def __copy__(self) -> "Building":
-        return Building(self._id,
-                        self._name,
-                        self._cost,
-                        self._appeal)
+        return Building(_id=self._id,
+                        name=self._name,
+                        cost=self._cost,
+                        running_costs=self._running_costs,
+                        appeal=self._appeal)
 
     @property
     def id(self) -> int:
@@ -135,17 +135,6 @@ class Building:
                                                     income=business.get("income", 0.0),
                                                     jobs=jobs))
 
-    @staticmethod
-    def copy(building: "Building", _id: int) -> "Building":
-        """
-        copy building with new id
-        """
-        return Building(_id,
-                        building.name,
-                        building.cost,
-                        building.running_costs,
-                        building.appeal)
-
 
 class House(Building):
     """
@@ -164,6 +153,14 @@ class House(Building):
         self._free_capacity = capacity
 
         self._families = set()
+
+    def __copy__(self) -> "House":
+        return House(_id=self._id,
+                        name=self._name,
+                        cost=self._cost,
+                        running_costs=self._running_costs,
+                        appeal=self._appeal,
+                        capacity=self._capacity)
 
     @property
     def capacity(self) -> int:
@@ -227,14 +224,14 @@ class Business(Building):
 
         self._total_income = self._income - self._running_costs
 
-    def __copy__(self) -> "Building":
-        return Business(self._id,
-                        self._name,
-                        self._cost,
-                        self._running_costs,
-                        self._appeal,
-                        self._income,
-                        self._open_jobs)
+    def __copy__(self) -> "Business":
+        return Business(_id=self._id,
+                        name=self._name,
+                        cost=self._cost,
+                        running_costs=self._running_costs,
+                        appeal=self._appeal,
+                        income=self._income,
+                        jobs=self._open_jobs)
 
     @property
     def total_income(self) -> float:

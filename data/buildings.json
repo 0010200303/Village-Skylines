@@ -74,7 +74,7 @@
             "appeal": -10,
             "cost": 1000,
             "running_cost": 100,
-            "_income": 50,
+            "income": 50,
             "jobs": {
                 "minimum wage": 10,
                 "minimum wage city worker": 2

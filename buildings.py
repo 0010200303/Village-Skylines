@@ -209,7 +209,7 @@ class Business(Building):
                  running_costs: float = 0.0,
                  appeal: float = 0.0,
                  income: float = 0.0,
-                 jobs: {Job: int} = None) -> None:
+                 jobs: {str: int} = None) -> None:
         super().__init__(_id, name, cost, running_costs, appeal)
 
         self.active = True
@@ -261,6 +261,28 @@ class Business(Building):
         """
         return self._employees
 
+    def set_job(self, job_id: str, adult: Adult) -> None:
+        """
+        employes adult at job
+        """
+        self._open_jobs[job_id] -= 1
+        if self._open_jobs[job_id] <= 0:
+            self._open_jobs.pop(job_id)
+
+        # assign the job to an adult
+        self._employees.add(adult)
+        adult.set_job(job_id, self)
+
+        # gets income from job
+        job = Job.jobs[job_id]
+        if job.payed_by_village:
+            self._running_costs += job.income
+            self._total_income -= job.income
+
+        # gets taxes
+        self._income += job.income * constants.INCOME_TAX_PORTION
+        self._total_income += job.income * constants.INCOME_TAX_PORTION
+
     def try_acquire_job(self, adult: Adult) -> bool:
         """
         tries to acquire an open job from the current business
@@ -271,22 +293,7 @@ class Business(Building):
 
         # gets open job
         job = next(iter(self._open_jobs))
-        self._open_jobs[job] -= 1
-        if self._open_jobs[job] <= 0:
-            self._open_jobs.pop(job)
-
-        # assign the job to an adult
-        self._employees.add(adult)
-        adult.set_job(job, self)
-
-        # gets income from job
-        if job.payed_by_village:
-            self._running_costs += job.income
-            self._total_income -= job.income
-
-        # gets taxes
-        self._income += job.income * constants.INCOME_TAX_PORTION
-        self._total_income += job.income * constants.INCOME_TAX_PORTION
+        self.set_job(job, adult)
 
         return True
 
@@ -296,17 +303,18 @@ class Business(Building):
         """
         self._employees.remove(adult)
 
-        if adult.job in self._open_jobs:
-            self._open_jobs[adult.job] += 1
+        if adult.job_id in self._open_jobs:
+            self._open_jobs[adult.job_id] += 1
         else:
-            self._open_jobs[adult.job] = 1
+            self._open_jobs[adult.job_id] = 1
 
-        if adult.job.payed_by_village:
-            self._running_costs -= adult.job.income
-            self._total_income += adult.job.income
+        job = Job.jobs[adult.job_id]
+        if job.payed_by_village:
+            self._running_costs -= job.income
+            self._total_income += job.income
 
-        self._income -= adult.job.income * constants.INCOME_TAX_PORTION
-        self._total_income -= adult.job.income * constants.INCOME_TAX_PORTION
+        self._income -= job.income * constants.INCOME_TAX_PORTION
+        self._total_income -= job.income * constants.INCOME_TAX_PORTION
 
     def destroy(self) -> None:
         """

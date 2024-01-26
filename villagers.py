@@ -110,25 +110,25 @@ class Adult(Villager):
                  name: str,
                  age: int,
                  happiness: float,
-                 job: Job = None,
+                 job_id: str = None,
                  workplace: "Business" = None) -> None:
         super(Adult, self).__init__(name, age, happiness)
 
-        self._job = job
+        self._job_id = job_id
         self._workplace = workplace
 
         # checks if adult has job and sets the tax
-        if self._job is None:
+        if self._job_id is None:
             self._income = 0.0
         else:
             self._income = self._job.income * 0.14
 
     @property
-    def job(self) -> Job:
+    def job_id(self) -> Job:
         """
         job getter
         """
-        return self._job
+        return self._job_id
 
     @property
     def income_from_tax(self) -> float:
@@ -138,21 +138,21 @@ class Adult(Villager):
         return self._income
 
     def set_job(self,
-                job: Job,
+                job_id: str,
                 workplace: "Business" = None,
                 destroyed_workplace: bool = False) -> None:
         """
         job setter
         """
-        if job is None:
+        if job_id is None:
             self._income = 0.0
 
             if destroyed_workplace is False and self._workplace is not None:
                 self._workplace.loose_job(self)
         else:
-            self._income = job.income
+            self._income = Job.jobs[job_id].income
 
-        self._job = job
+        self._job_id = job_id
         self._workplace = workplace
 
     def save(self, file: io.BufferedWriter) -> None:

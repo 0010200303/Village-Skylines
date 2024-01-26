@@ -4,6 +4,8 @@ Villager related data classes
 __author__ = "8293677, Schoenbrodt, 8288950, Haas"
 
 import random
+import struct
+import io
 
 import constants
 from villagers import Villager, Child, Adult, Senior
@@ -20,12 +22,10 @@ class Family:
         self._seniors = {v for v in villagers if isinstance(v, Senior)}
 
         # updates villager in families
-        self._children.update([v for v in villagers
-                               if type(v) is Villager and v.age < constants.ADULT_AGE])
-        self._adults.update([v for v in villagers if
-                             type(v) is Villager and v.age < constants.SENIOR_AGE])
-        self._seniors.update([v for v in villagers if
-                              type(v) is Villager and v.age >= constants.SENIOR_AGE])
+        self._children.update([v for v in villagers if v.age < constants.ADULT_AGE])
+        self._adults.update([v for v in villagers if v.age >= constants.ADULT_AGE \
+                             and v.age < constants.SENIOR_AGE])
+        self._seniors.update([v for v in villagers if v.age >= constants.SENIOR_AGE])
 
         # calculates the people in the family
         self._len = len(self._children) + len(self._adults) + len(self._seniors)
@@ -34,7 +34,7 @@ class Family:
         self._mean_happiness = (sum(child.happiness for child in self._children) +
                                 sum(adult.happiness for adult in self._adults) +
                                 sum(senior.happiness for senior in self._seniors)) / len(self)
-        
+
         self._house = None
 
     def __len__(self) -> int:
@@ -52,7 +52,7 @@ class Family:
         """
         unemployed adults getter
         """
-        return {adult for adult in self._adults if adult.job is None}
+        return {adult for adult in self._adults if adult.job_id is None}
 
     def tick(self) -> None:
         """
@@ -68,7 +68,9 @@ class Family:
         # updates attributes for the children
         for child in self._children:
             child.age += 1
-            child.happiness -= 0.05
+
+            if self._house is None:
+                child.happiness -= 0.05
 
             # lets children grow up
             if child.age >= constants.ADULT_AGE:
@@ -78,7 +80,9 @@ class Family:
         # updates attributes for the seniors
         for senior in self._seniors:
             senior.age += 1
-            senior.happiness -= 0.05
+
+            if self._house is None:
+                senior.happiness -= 0.05
 
             # lets seniors die
             if random.randint(0, constants.MAX_AGE) >= 120 - senior.age:
@@ -89,6 +93,15 @@ class Family:
         # updates attributes for the adults
         for adult in self._adults:
             adult.age += 1
+
+            if self._house is None:
+                adult.happiness -= 0.05
+
+            if adult.job_id is None:
+                adult.happiness -= 0.03
+            else:
+                adult.happiness += 0.02
+
             adult.happiness -= 0.1
 
             # lets adults retire
@@ -135,3 +148,21 @@ class Family:
 
         for adult in self._adults:
             adult.set_job(None)
+
+    def save(self, file: io.BufferedWriter) -> None:
+        """
+        save family to file
+        """
+        file.write(struct.pack(">III",
+                               len(self._children,
+                               len(self._adults,
+                               len(self._seniors)))))
+
+        for child in self._children:
+            child.save(file)
+
+        for adult in self._adults:
+            adult.save(file)
+
+        for senior in self._seniors:
+            senior.save(file)

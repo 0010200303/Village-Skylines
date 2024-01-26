@@ -64,7 +64,7 @@ class Village:
                     for i in range(population_count // 2)}
 
         # initialise job
-        jobs = {Job("9to5", 2560): 4}
+        jobs = {"minimum wage": 400}
 
         # update buildings
         buildings = set()
@@ -160,21 +160,12 @@ class Village:
         file.write(struct.pack(">BBI", self._day, self._month, self._year))
 
         # preview stats
-        file.write(struct.pack(">iff", self.population, self.mean_happiness, self.appeal))
+        file.write(struct.pack(">Iff", self.population, self.mean_happiness, self.appeal))
 
         # families
-        # file.write(struct.pack(">i", len(self._children)))
-        # file.write(struct.pack(">i", len(self._adults)))
-        # file.write(struct.pack(">i", len(self._seniors)))
-
-        # for child in self._children:
-        #     child.save(file)
-
-        # for adult in self._adults:
-        #     adult.save(file)
-
-        # for senior in self._seniors:
-        #     senior.save(file)
+        file.write(struct.pack(">I", len(self._families)))
+        for family in self._families:
+            family.save(file)
 
         # TODO: save random state
 
@@ -194,19 +185,10 @@ class Village:
         [day, month, year] = struct.unpack(">BBI", file.read(6))
 
         # skip preview stats
-        file.read(8)
+        file.read(12)
 
-        # villagers
+        # families
         villagers = []
-
-        # unpacks villagers
-        [children_count] = struct.unpack(">i", file.read(4))
-        [adult_count] = struct.unpack(">i", file.read(4))
-        [senior_count] = struct.unpack(">i", file.read(4))
-
-        villagers.extend([Child.load(file) for _ in range(children_count)])
-        villagers.extend([Adult.load(file) for _ in range(adult_count)])
-        villagers.extend([Senior.load(file) for _ in range(senior_count)])
 
         return cls(name, money, villagers, [], day, month, year)
 
@@ -276,22 +258,24 @@ class Village:
 
             person_count -= total
 
+            last_name = random.choice(Villager.last_names)
+
             villagers = set()
             villagers.update({Child(f"{random.choice(Villager.first_names)} \
-                                    {random.choice(Villager.last_names)}", \
+                                    {last_name}", \
                                     random.triangular(0, 17 * 365, 10 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(child_count)})
             villagers.update({Adult(f"{random.choice(Villager.first_names)} \
-                                    {random.choice(Villager.last_names)}", \
+                                    {last_name}", \
                                     random.triangular(18 * 365, 75 * 365, 32 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(adult_count)})
             villagers.update({Senior(f"{random.choice(Villager.first_names)} \
-                                     {random.choice(Villager.last_names)}", \
+                                     {last_name}", \
                                     random.triangular(80 * 365, 119 * 365, 100 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(senior_count)})
 
             family = Family(villagers)
-            house.move_in(family)
+            family.set_house(house)
 
             self._families.add(family)
 

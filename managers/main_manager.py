@@ -62,10 +62,6 @@ class MainManager:
         """
         if self._current_state == managers.states.State.INGAME:
             match key:
-                # save game
-                case "s":
-                    self._game_manager.save()
-
                 # puts you in the pause menu
                 case "Escape":
                     self.change_state(managers.states.State.INGAME_MENU)

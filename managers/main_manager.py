@@ -17,9 +17,7 @@ class MainManager:
     Main Manager
     """
     def __init__(self) -> None:
-        village = Village.create_village("Frankfurt", 1_000)
-        # with open("saves/tust.vss", "rb") as file:
-        #     village = Village.load(file)
+        village = Village.create_village("Frankfurt", 200)
 
         self._current_state = managers.states.State.ERROR
 

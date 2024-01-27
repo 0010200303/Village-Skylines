@@ -54,6 +54,13 @@ class Family:
         """
         return {adult for adult in self._adults if adult.job_id is None}
 
+    @property
+    def house(self):
+        """
+        house getter
+        """
+        return self._house
+
     def tick(self) -> None:
         """
         tick
@@ -74,6 +81,9 @@ class Family:
             else:
                 child.happiness += 0.03
 
+            # clamp happiness
+            child.happiness = max(0.0, min(100.0, child.happiness))
+
             # lets children grow up
             if child.age >= constants.ADULT_AGE:
                 children_to_remove.add(child)
@@ -87,6 +97,9 @@ class Family:
                 senior.happiness -= 0.05
             else:
                 senior.happiness += 0.02
+
+            # clam< happiness
+            senior.happiness = max(0.0, min(100.0, senior.happiness))
 
             # lets seniors die
             if random.randint(0, constants.MAX_AGE) >= 120 - senior.age:
@@ -106,7 +119,8 @@ class Family:
             if adult.job_id is None:
                 adult.happiness -= 0.03
 
-            adult.happiness -= 0.1
+            # clamp happiness
+            adult.happiness = max(0.0, min(100.0, adult.happiness))
 
             # lets adults retire
             if adult.age >= constants.SENIOR_AGE:

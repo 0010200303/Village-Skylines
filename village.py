@@ -12,7 +12,6 @@ import constants
 from family import Family
 from villagers import Villager, Child, Adult, Senior
 from buildings import Building, House, Business
-from jobs import Job
 
 CALLENDER = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -59,20 +58,26 @@ class Village:
         """
         creates standard village
         """
-        # creates families
-        families = {Family({Adult(f"Generic{str(j)}", 21 * 365, 100.0, None) for j in range(2)})
-                    for i in range(population_count // 2)}
+        Building.load_buildings()
 
-        # initialise job
-        jobs = {"minimum wage": 400}
+        village = cls(name, 10_000, set(), set(), day=27)
 
-        # update buildings
-        buildings = set()
-        buildings.update({House(i, str(i), capacity=8) for i in range(population_count // 4)})
-        buildings.update({Business(i, str(i), jobs=dict(jobs))
-                          for i in range(population_count // 100)})
+        # create houses
+        for _ in range(20):
+            village.buy_building(Building.houses[0], True)
+        for _ in range(11):
+            village.buy_building(Building.houses[1], True)
+        for _ in range(2):
+            village.buy_building(Building.houses[2], True)
 
-        return cls(name, 10_000, families, buildings, day=30)
+        # create businesses
+        for _ in range(2):
+            village.buy_building(Building.businesses[0], True)
+
+        # create villagers
+        village._gain_new_families(population_count)
+
+        return village
 
     @property
     def name(self) -> str:
@@ -233,11 +238,35 @@ class Village:
             if random.random() > 0.99:
                 business.active = False
 
-        # gain new families
-        if self.population <= 0:
-            return
+        # find new home
+        for family in self._families:
+            if family.house is None:
+                house = self._find_house(len(family))
 
-        person_count = (self.appeal / self.population) * self.mean_happiness
+                if house is not None:
+                    family.set_house(house)
+
+        # gain new families
+        self._gain_new_families()
+
+    def _find_house(self, capacity: int) -> House:
+        """
+        find house with enough capacity for family else return None
+        """
+        for house in self._houses.values():
+            if house.free_capacity >= capacity:
+                return house
+        return None
+
+    def _gain_new_families(self, person_count: int = None) -> None:
+        """
+        gain new family
+        """
+        if person_count is None:
+            if self.population <= 0:
+                return
+            person_count = (self.appeal / self.population) * self.mean_happiness
+
         while True:
             child_count = int(random.triangular(0, 5, 2))
             adult_count = int(random.triangular(1, 5, 1.8))
@@ -248,13 +277,7 @@ class Village:
                 break
 
             # check if any house has enough capacity for family
-            house = None
-            for h in self._houses.values():
-                if h.free_capacity >= total:
-                    house = h
-                    break
-            if house is None:
-                break
+            house = self._find_house(total)
 
             person_count -= total
 
@@ -270,7 +293,7 @@ class Village:
                                     random.triangular(18 * 365, 75 * 365, 32 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(adult_count)})
             villagers.update({Senior(f"{random.choice(Villager.first_names)} \
-                                     {last_name}", \
+                                    {last_name}", \
                                     random.triangular(80 * 365, 119 * 365, 100 * 365), \
                                     random.triangular(0, 100, 80)) for i in range(senior_count)})
 
@@ -316,7 +339,7 @@ class Village:
 
         self._appeal -= building.appeal
 
-    def buy_building(self, building: Building) -> Building:
+    def buy_building(self, building: Building, init: bool = False) -> Building:
         """
         buying building
         """
@@ -324,7 +347,8 @@ class Village:
             return None
 
         # subtract cost of building
-        self._money -= building.cost
+        if init is False:
+            self._money -= building.cost
 
         new_building = copy.copy(building)
 

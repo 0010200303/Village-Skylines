@@ -43,6 +43,12 @@ class FrameBase(ttk.Frame):
                                  font=("Comic Sans MS", 16),
                                  borderwidth=8,
                                  relief=tk.RAISED)
+            self.style.configure("MainMenuDISABLED.TButton",
+                                 font=("Comic Sans MS", 16),
+                                 borderwidth=8,
+                                 relief=tk.RAISED,
+                                 foreground="Red",
+                                 background="Red")
 
     def _change_state(self, state: str) -> None:
         """

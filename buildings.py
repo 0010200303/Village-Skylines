@@ -125,7 +125,7 @@ class Building:
                 if _jobs is not None:
                     jobs = {}
                     for key, value in _jobs.items():
-                        jobs[Job.jobs[key]] = value
+                        jobs[key] = value
 
                 Building.businesses.append(Business(_id=i,
                                                     name=business.get("name", "unknown business"),
@@ -253,6 +253,13 @@ class Business(Building):
         open jobs getter
         """
         return self._open_jobs
+
+    @property
+    def open_job_count(self) -> int:
+        """
+        open job count getter
+        """
+        return sum(self.open_jobs.values())
 
     @property
     def employees(self) -> set[Adult]:

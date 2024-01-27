@@ -1,76 +1,61 @@
 [
     {
-        "name": "minimum wage",
-        "income": 2200
-    },
-    {
         "name": "Baker",
-        "income": 2500
+        "income": 2500.0
     },
     {
         "name": "Carpenter",
-        "income": 3750
+        "income": 3750.0
     },
     {
         "name": "Lawyer",
-        "income": 10000
+        "income": 7500.0
     },
     {
-        "name": "Nurse ",
-        "income": 6000
+        "name": "Nurse",
+        "income": 3200.0
+    },
+    {
+        "name": "Doctor",
+        "income": 6000.0
     },
     {
         "name": "Journalist",
-        "income": 3750
+        "income": 3750.0
     },
     {
         "name": "Dentist",
-        "income": 12500
+        "income": 6500.0
     },
     {
-        "name": "Engineer",
-        "income": 6600
-    },
-    {
-        "name": "Electrical",
-        "income": 3700
+        "name": "Electrician",
+        "income": 3700.0
     },
     {
         "name": "Plumber",
-        "income": 4500
+        "income": 3200.0
     },
     {
         "name": "Hairdresser",
-        "income": 2500
-    },
-    {
-        "name": "minimum wage city worker",
-        "income": 2200,
-        "payed_by_village": true
+        "income": 2500.0
     },
     {
         "name": "Teacher",
-        "income": 4500,
-        "payed_by_village": true
+        "income": 3200.0
     },
     {
         "name": "Caretaker",
-        "income": 2500,
+        "income": 2500.0,
         "payed_by_village": true
     },
     {
-        "name": "Police",
-        "income": 3700,
+        "name": "Policeman",
+        "income": 3000.0,
         "payed_by_village": true
     },
     {
         "name": "Firefighter",
-        "income": 3200,
-        "payed_by_village": true
-    },
-    {
-        "name": "Cleaner",
-        "income": 1250,
+        "income": 3200.0,
         "payed_by_village": true
     }
 ]

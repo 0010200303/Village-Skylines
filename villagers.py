@@ -8,6 +8,7 @@ import struct
 from typing import TYPE_CHECKING
 
 from jobs import Job
+import constants
 
 # includes only needed for typing
 if TYPE_CHECKING:
@@ -114,6 +115,8 @@ class Adult(Villager):
                  workplace: "Business" = None) -> None:
         super(Adult, self).__init__(name, age, happiness)
 
+        Job.load_jobs()
+
         self._job_id = job_id
         self._workplace = workplace
 
@@ -121,7 +124,7 @@ class Adult(Villager):
         if self._job_id is None:
             self._income = 0.0
         else:
-            self._income = self._job.income * 0.14
+            self._income = Job.jobs[self._job_id].income * constants.INCOME_TAX_PORTION
 
     @property
     def job_id(self) -> Job:
@@ -150,7 +153,7 @@ class Adult(Villager):
             if destroyed_workplace is False and self._workplace is not None:
                 self._workplace.loose_job(self)
         else:
-            self._income = Job.jobs[job_id].income
+            self._income = Job.jobs[job_id].income * constants.INCOME_TAX_PORTION
 
         self._job_id = job_id
         self._workplace = workplace

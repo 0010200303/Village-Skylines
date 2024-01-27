@@ -37,9 +37,10 @@ class IngameMenuFrame(FrameBase):
 
         # save button
         save_btn = ttk.Button(self,
-                              style="MainMenu.TButton",
+                              style="MainMenuDISABLED.TButton",
                               text="Save",
-                              command=self._main_manager.save_game)
+                            # command=self._main_manager.save_game,
+                              )
         save_btn.pack(side=tk.TOP, padx=10, pady=10)
 
         # exit button

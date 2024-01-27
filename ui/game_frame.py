@@ -109,7 +109,7 @@ class GameFrame(FrameBase):
                                   text="Village Buldings")
         buildings_lbl.pack(side=tk.TOP)
 
-        columns = ("name",)
+        columns = ("name", "appeal")
         buildings_scrollbar = ttk.Scrollbar(buildings_frame)
         self._buildings_list = ttk.Treeview(buildings_frame,
                                             yscrollcommand=buildings_scrollbar.set,
@@ -125,15 +125,15 @@ class GameFrame(FrameBase):
                                     self._treeview_sort_column(self._buildings_list, column, False))
 
         for building in self._village._buildings.values():
-            values = (building.name,)
+            values = (building.name, building.appeal)
             self._buildings_list.insert("", tk.END, tags=(Building, building.id), values=values)
 
         for house in self._village.houses.values():
-            values = (house.name,)
+            values = (house.name, house.appeal)
             self._buildings_list.insert("", tk.END, tags=(House, house.id), values=values)
 
         for business in self._village.businesses.values():
-            values = (business.name,)
+            values = (business.name, business.appeal)
             self._buildings_list.insert("", tk.END, tags=(Business, business.id), values=values)
 
         buildings_scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
@@ -151,7 +151,7 @@ class GameFrame(FrameBase):
                              text="Shop")
         shop_lbl.pack(side=tk.TOP)
 
-        columns = ("name",)
+        columns = ("name", "cost", "appeal", "jobs")
         shop_scrollbar = ttk.Scrollbar(shop_frame)
         self._shop_list = ttk.Treeview(shop_frame,
                                        yscrollcommand=shop_scrollbar.set,
@@ -167,15 +167,15 @@ class GameFrame(FrameBase):
                               self._treeview_sort_column(self._shop_list, column, False))
 
         for building in Building.buildings:
-            values = (building.name,)
+            values = (building.name, building.cost, building.appeal, 0)
             self._shop_list.insert("", tk.END, tags=(Building, building.id), values=values)
 
         for house in Building.houses:
-            values = (house.name,)
+            values = (house.name, house.cost, house.appeal, 0)
             self._shop_list.insert("", tk.END, tags=(House, house.id), values=values)
 
         for business in Building.businesses:
-            values = (business.name,)
+            values = (business.name, business.cost, business.appeal, business.open_job_count)
             self._shop_list.insert("", tk.END, tags=(Business, business.id), values=values)
 
         shop_scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
@@ -250,7 +250,7 @@ class GameFrame(FrameBase):
         """
         display building type from village
         """
-        self._building_info.configure(text=f"""Name: {building.name}
+        self._building_info.configure(text=f"""{building.name}
 Running Costs: {building.running_costs}
 Appeal: {building.appeal}""")
 
@@ -258,17 +258,18 @@ Appeal: {building.appeal}""")
         """
         display house type from village
         """
-        self._building_info.configure(text=f"""Name: {house.name}
+        self._building_info.configure(text=f"""{house.name}
 Running Costs: {house.running_costs}
 Appeal: {house.appeal}
-Capacity: {house.capacity}
+Capacity: {house.free_capacity}
+Inhabitants: {house.capacity - house.free_capacity}
 """)
 
     def _display_building_business(self, business: Business) -> None:
         """
         display business type from village
         """
-        self._building_info.configure(text=f"""Name: {business.name}
+        self._building_info.configure(text=f"""{business.name}
 Running Costs: {business.running_costs}
 Income: {business.income}
 Total Income: {business.total_income}
@@ -283,15 +284,6 @@ Employees: {len(business.employees)}
         """
         building_type, building_id = self._buildings_list.item(selection)["tags"]
         building_id = int(building_id)
-
-        #checks type of building
-        match building_type:
-            case "<class \'buildings.Building\'>":
-                l = self._village.buildings
-            case "<class \'buildings.House\'>":
-                l = self._village.houses
-            case "<class \'buildings.Business\'>":
-                l = self._village.businesses
 
         self._village.destroy_building(building_type, building_id)
         self._buildings_list.delete(selection)
@@ -326,7 +318,7 @@ Employees: {len(business.employees)}
         """
         display building type from shop
         """
-        self._shop_info_lbl.configure(text=f"""Name: {building.name}
+        self._shop_info_lbl.configure(text=f"""{building.name}
 Cost: {building.cost}
 Running Costs: {building.running_costs}
 Appeal: {building.appeal}""")
@@ -335,7 +327,7 @@ Appeal: {building.appeal}""")
         """
         display house type from shop
         """
-        self._shop_info_lbl.configure(text=f"""Name: {house.name}
+        self._shop_info_lbl.configure(text=f"""{house.name}
 Cost: {house.cost}
 Running Costs: {house.running_costs}
 Appeal: {house.appeal}
@@ -345,7 +337,7 @@ Capacity: {house.capacity}""")
         """
         display business type from shop
         """
-        self._shop_info_lbl.configure(text=f"""Name: {business.name}
+        self._shop_info_lbl.configure(text=f"""{business.name}
 Cost: {business.cost}
 Running Costs: {business.running_costs}
 Appeal: {business.appeal}
@@ -371,5 +363,5 @@ Jobs: {sum(business.open_jobs.values())}""")
         if (building := self._village.buy_building(building)) is None:
             return
 
-        values = ("building", building.name)
+        values = (building.name, building.appeal)
         self._buildings_list.insert("", tk.END, tags=(Building, building.id), values=values)

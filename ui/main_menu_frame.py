@@ -38,9 +38,10 @@ class MainMenuFrame(FrameBase):
 
         # load button
         load_btn = ttk.Button(self,
-                              style="MainMenu.TButton",
+                              style="MainMenuDISABLED.TButton",
                               text="Load",
-                              command=lambda: self._main_manager.change_state(State.LOAD_MENU))
+                            # command=lambda: self._main_manager.change_state(State.LOAD_MENU),
+                              )
         load_btn.pack(side=tk.TOP, pady=10)
 
         # quit button

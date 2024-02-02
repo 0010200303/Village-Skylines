@@ -355,13 +355,19 @@ Jobs: {sum(business.open_jobs.values())}""")
         match building_type:
             case "<class \'buildings.Building\'>":
                 building = Building.buildings[building_id]
+                new_building_type = Building
             case "<class \'buildings.House\'>":
                 building = Building.houses[building_id]
+                new_building_type = House
             case "<class \'buildings.Business\'>":
+                new_building_type = Business
                 building = Building.businesses[building_id]
 
         if (building := self._village.buy_building(building)) is None:
             return
 
         values = (building.name, building.appeal)
-        self._buildings_list.insert("", tk.END, tags=(Building, building.id), values=values)
+        self._buildings_list.insert("",
+                                    tk.END,
+                                    tags=(new_building_type, building.id),
+                                    values=values)
